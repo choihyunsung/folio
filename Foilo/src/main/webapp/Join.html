@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8">
+    <title> - 회원가입 페이지 - </title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./style/JoinStyle.css">
+</head>
+<body>
+    <div> <!-- Main Container -->
+        <form action="JoinAction.do" method="post" onsubmit="return valudationCheckedAll()"> <!--회원에 대한 정보는 Post로-->
+            <div id="joinRoot" class="rootContainerStyle"> <!-- Login Root Container -->
+                <div class="mainContainerStyle"> <!--Required infomation input-->
+                    <p class="nomalTitleStyle">필수 입력</p> <!--필수 정보 입력-->
+                        <input id="inputId" class="nomalInputStyle" name = "id" type="text" placeholder="아이디를 입력하세요." onkeyup="valudationCheckedIdListener()">
+                        <img id="idOkay" src="./images/check_icon.png" style="width: 20px; height: 20px;" hidden>
+                        <br>
+                        <p id="validationIdText" class="validationTextStyle" hidden>아이디 입력확인 텍스트</p> <!--Ajax 아이디 검증-->
+                        <input id="passwordInput" name = "password" class="nomalInputStyle" type="password" placeholder="패스워드를 입력하세요."  onkeyup="valudationCheckedListener()">
+                        <img id="passwordOkay" src="./images/check_icon.png" style="width: 20px; height: 20px;" hidden>
+                        <br>
+                        <input id="passwordChecked" class="nomalInputStyle" type="password" placeholder="패스워드를 확인하세요."  onkeyup="valudationCheckedListener()"><br>
+                        <p id="validationPasswordText" class="validationTextStyle" hidden>패스워드 입력확인 텍스트</p> <!--패스워드가 같은지 검증 텍스트-->
+                </div><!--Required infomation input-->
+                <div class="subContainerStyle"><!--not Required information input-->
+                    <p class="nomalTitleStyle">상세 정보</p> <!--상세 정보 입력-->
+                        <p class="subTitleStyle">이름</p> <!--주소-->
+                            <input id="inputName" class="nomalInputStyle" name="cstNm" type="text" placeholder="이름을 입력하세요."><br>
+                        <p class="subTitleStyle">성별</p> <!--성별-->
+                            <label><input name="gender" type="radio" value="남" checked>남</label>
+                            <label><input name="gender" type="radio" value="여">여</label><br>
+                        <p class="subTitleStyle">이메일</p> <!--이메일-->
+                            <input id="emailInput" name="email" class="nomalInputStyle" type="email" placeholder="이메일을 입력하세요" onkeyup="valudationCheckedEmailListener()">
+                            <img id="emailOkay" src="./images/check_icon.png" style="width: 20px; height: 20px;" hidden>
+                            <br>
+                            <p id="validationEmailText" class="validationTextStyle" hidden>이메일 입력확인 텍스트</p> <!--패스워드가 같은지 검증 텍스트-->
+                        <p class="subTitleStyle">주소</p> <!--주소-->
+                            <input id="addressInput" class="nomalInputStyle" name="address" type="text" placeholder="주소를 입력하세요."><br>
+                        <p class="subTitleStyle">자기 소개</p> <!--자기 소개-->
+                            <textarea class="nomalTextArea"  name="aboutMe" placeholder="간단한 자기소개 해주세요!"></textarea>
+                </div><!--not Required information input-->
+                <button class="bottomButtonStyle" type="submit">완료</button> <!--입력받으면 servlet로 데이터 전송! -->
+            </div> <!-- Login Root Container -->
+        </form>
+    </div> <!-- Main Container -->
+    <script src="./script/JoinPage.js"></script> 
+</body>
+</html>

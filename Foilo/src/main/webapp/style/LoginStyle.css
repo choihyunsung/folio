@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+}
+#loginContainer {
+    width: min-content;
+    height: min-content;
+    border-radius: 3px;
+    position: absolute;
+    box-shadow: 5px 5px 5px 5px gray;
+    top: 50%;
+} 
+
+/* 로그인 박스 스타일 */
+#loginBox {
+    background-color: blanchedalmond;
+    padding: 15px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 5px 5px 5px 5px gray;
+} 
+
+/*로그인 박스안에 텍스트 스타일정의 */
+#loginBox p{
+    margin: 0px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/**로그인 박스안에 아이디,패스워드 입력창 정의*/
+#loginBox > input[type="text"], input[type="password"] {
+    border-radius: 5px;
+    padding-left: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#loginBox > button {
+    margin-top: 5px;
+    border-radius: 5px;
+    background-color: rgb(241, 236, 227);
+    box-shadow: 1px 1px gray;
+}
+
+/**로그인 박스안에 입력요소 스타일 정의(기본 마진 정의)*/
+#loginBox > input {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#ssoLoginBox {
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: rgb(253, 251, 246);
+    padding-bottom: 15px;
+}
+
+#ssoLoginBox > p {
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#ssoLoginBox > button {
+    width: 100%;
+    stroke-width: 1px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    padding: 1px;
+    text-align: center;
+}
+
+#ssoLoginKakao {
+    background-color: yellow;
+}

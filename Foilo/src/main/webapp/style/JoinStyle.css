@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+}
+textarea {
+    resize: none;
+}
+
+/*기본적인 컨테이너 속성 그림자 라운드등을 정의.*/
+.rootContainerStyle {
+    width: min-content;
+    height: min-content;
+    position: absolute;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 5px 5px 5px 5px gray;
+}
+
+.mainContainerStyle {
+    padding-top: 1px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: blanchedalmond;
+    box-shadow: 5px 5px 5px 5px gray;
+} 
+
+.subContainerStyle {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgb(253, 251, 246);
+} 
+
+.nomalTitleStyle {
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.nomalInputStyle {
+    border-radius: 5px;
+    padding-left: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+input {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.subTitleStyle {
+    font-size: small;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.bottomButtonStyle {
+    width: 100%;
+    height: 50px;
+    margin-top: 5px;
+    border-radius: 5px;
+    background-color: rgb(241, 236, 227);
+    box-shadow: 1px 1px gray;
+}
+
+.nomalTextArea {
+    height: 100px;
+    border-radius: 5px;
+    padding-left: 10px;
+    box-shadow: 1px 1px gray;
+}
+
+.validationTextStyle {
+    margin: 0;
+    margin-top: 2px;
+    margin-left: 10px;
+    font-size: 10px;
+}
