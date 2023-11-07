@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import kr.block.common.base.dao.BaseDao;
+import kr.block.common.utils.DataBaseUtils;
 import kr.block.model.member.vo.MemberVo;
 
 /***
@@ -22,24 +23,11 @@ import kr.block.model.member.vo.MemberVo;
 public class MemberDAO extends BaseDao<MemberVo> {
 	
 	private final static String TABLE_NAME_MEMBER = "member"; 
-	private Connection conn = null;
-	
-	public MemberDAO() {
-		Context ctx;
-		try {
-			ctx = new InitialContext();
-			DataSource dataSource = (DataSource)ctx.lookup("java:comp/env/" + "jdbc/mysql");
-			conn = dataSource.getConnection();
-		} catch (NamingException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	@Override
 	public void insert(MemberVo vo) {
-		//TODO TESTLINE 나중에 공통으로 처리 
 		try {
+			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "INSERT INTO " + TABLE_NAME_MEMBER + " ("
 					+ "cno, id, password, cstNm, gender, email, address, aboutMe)"
 					+ " VALUES ("
@@ -56,19 +44,15 @@ public class MemberDAO extends BaseDao<MemberVo> {
 				conn.createStatement().executeUpdate(query);
 				conn.close();
 		} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 		}
-		
-	
-		//TODO TESTLINE
 	}
 
 	@Override
 	public List<MemberVo> selectAll(String tableName) {
-		//TODO TESTLINE 나중에 공통으로 처리
 			List<MemberVo> list = new ArrayList<MemberVo>();
 		try {
+			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "SELECT * FROM " + tableName;
 			System.out.println("query : "+ query);
 			ResultSet rs = conn.createStatement().executeQuery(query);
@@ -98,15 +82,16 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	public boolean isMemberById(String id) {
 		boolean isId = false;
 		try {
+			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "SELECT COUNT(*) FROM " + TABLE_NAME_MEMBER +" WHERE id = '" + id + "';";
 			System.out.println("query : "+ query);
 			ResultSet rs = conn.createStatement().executeQuery(query);
 			rs.next(); //TODO HSCHOE 이거 나중에 꼭 리펙토링 해야함 너무 더러움
 			int count = rs.getInt(1);
 			isId = (count > 0)? true : false; //아이디 가 있으면 true 아니면 false	
+			conn.close();
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("2");
 			e.printStackTrace();
 		}
 		return isId;

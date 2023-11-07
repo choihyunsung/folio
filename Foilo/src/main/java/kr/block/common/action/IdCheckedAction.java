@@ -23,7 +23,6 @@ public class IdCheckedAction implements Action {
 			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("text/plain"); // 미디어 유형 설정
 			resp.getWriter().write(String.valueOf(dao.isMemberById(id)));
-			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

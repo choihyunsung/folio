@@ -25,7 +25,7 @@ public class JoinAction implements Action {
 		String email = req.getParameter("email");
 		String address = req.getParameter("address");
 		String aboutMe = req.getParameter("aboutMe");
-		/**cno 오토라 0으로 그냥 넣어줌 */
+		/**cno는 오토 이기 때문에 0으로 그냥 넣어줌 */
 		return new MemberVo(0, id, password, cstNm, gender, email, address, aboutMe);
 	}
 }
