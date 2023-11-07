@@ -17,6 +17,9 @@ const URL_LOCAL_HOST = "http://localhost:8080"
 const URL_FOLIO_ID_CHECKED = URL_LOCAL_HOST + "/Foilo/IdCheckedAction.do" //회원가입 아이디 체크
 
 let isIdChecked = false; //아이디 체크 불린값 @TODO HSCHOE이거 나중에 리펙토링 꼭해야함 
+/**
+	날잡아서 리펙토링 해야함 모듈로 처리해서 작업해야함 
+ */
 
 //변수 선언문 끝
 //Callback 선언문
