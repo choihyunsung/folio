@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="./style/LoginStyle.css">
 <body>
     <div id="loginContainer">
-        <form id="login_form" name="login_form" action="#" method="post">
+        <form id="login_form" name="login_form" method="post" onsubmit="return clickLoginListener()">
             <div id="loginBox">
                 <p id="loginBoxTitle">로그인</p>
                 <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요"><br>

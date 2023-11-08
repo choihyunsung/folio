@@ -13,8 +13,6 @@ public class MemberVo extends BaseVo {
 	private String address; //주소 
 	private String aboutMe; //자기소개 
 	
-	
-	
 	public MemberVo(int cno, String id, String password, String cstNm, String gender, String email, String address, String aboutMe) {
 		this.cno = cno;
 		this.id = id;

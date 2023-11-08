@@ -8,9 +8,10 @@ package kr.block.common.type;
 
 public enum ResponseMethodType {
 	Redirect(1), //리다이렉트
-	Forward(0); // 포워드 
+	Forward(0), //포워드
+	NONE(-1); //패이지 이동없음. 
 	
-	public int typeCode; //응답 코드의 타입코드 1 : 리다이렉트, 2 : 포워드
+	public int typeCode; 
 
 	ResponseMethodType(int typeCode) {
 		this.typeCode = typeCode;

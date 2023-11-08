@@ -20,7 +20,6 @@ public class ActionMapper {
 	private Properties prop = new Properties();
 	
 	public ActionMapper(ServletContext sc, String mappingParamName) {
-		
 		try {
 			prop.load(new FileReader(sc.getRealPath(sc.getInitParameter(mappingParamName))));
 			Iterator<Object> keyIterator = prop.keySet().iterator();
@@ -33,19 +32,15 @@ public class ActionMapper {
 				Action action = (Action)constructor.newInstance();
 				actionMap.put(uri, action);
 			}
-			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
 	/**등록되어 있는 ActionMap을 반환*/
 	public HashMap<String, Action> getActionMap() { return actionMap; }
 	/**프로퍼티를 반환*/
 	public Properties getProp() { return prop; }
 	/**해당 Uri의 Action을 반환 */
-	public Action getAction(String uri) { return actionMap.get(uri); }
-	
+	public Action getAction(String uri) { return actionMap.get(uri); }	
 }

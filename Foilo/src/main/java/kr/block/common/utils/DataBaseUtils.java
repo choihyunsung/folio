@@ -33,6 +33,7 @@ public class DataBaseUtils {
 		ResultSet resultSet = connection.createStatement().executeQuery(query);
 		return resultSet; 
 	}
+	
 	/***
 	 * 업데이트 쿼리 실행 -> 데이터 삽입 삭제 업데이트등.
 	 */

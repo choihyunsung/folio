@@ -1,12 +1,14 @@
 package kr.block.common.action;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.block.common.action.impl.Action;
+import kr.block.common.object.Pair;
+import kr.block.common.type.ResponseMethodType;
 import kr.block.model.member.dao.MemberDAO;
 
 public class IdCheckedAction implements Action {
@@ -14,7 +16,7 @@ public class IdCheckedAction implements Action {
 	private MemberDAO dao = new MemberDAO(); //Id를 체크할 MomberDAO
 	
 	@Override
-	public String excute(HttpServletRequest req, HttpServletResponse resp) {
+	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {
 		// TODO Auto-generated method stub
 		try {
 			req.setCharacterEncoding("UTF-8");
