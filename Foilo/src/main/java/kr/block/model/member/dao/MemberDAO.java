@@ -23,11 +23,10 @@ import kr.block.model.member.vo.MemberVo;
 public class MemberDAO extends BaseDao<MemberVo> {
 	
 	private final static String TABLE_NAME_MEMBER = "member"; 
-	
+	private DataBaseUtils dataBaseUtils = DataBaseUtils.getInstance();
 	@Override
 	public void insert(MemberVo vo) {
 		try {
-			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "INSERT INTO " + TABLE_NAME_MEMBER + " ("
 					+ "cno, id, password, cstNm, gender, email, address, aboutMe)"
 					+ " VALUES ("
@@ -40,9 +39,8 @@ public class MemberDAO extends BaseDao<MemberVo> {
 					+ vo.getAddress() + "','" 
 					+ vo.getAboutMe() + 
 					"');";
-				System.out.println("query : "+ query);
-				conn.createStatement().executeUpdate(query);
-				conn.close();
+				dataBaseUtils.updateQuery(query);
+				dataBaseUtils.closeConnection();
 		} catch (SQLException e) {
 				e.printStackTrace();
 		}
@@ -52,10 +50,9 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	public List<MemberVo> selectAll(String tableName) {
 			List<MemberVo> list = new ArrayList<MemberVo>();
 		try {
-			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "SELECT * FROM " + tableName;
 			System.out.println("query : "+ query);
-			ResultSet rs = conn.createStatement().executeQuery(query);
+			ResultSet rs = dataBaseUtils.executeQuery(query);
 		
 			while(rs.next()) {
 				MemberVo vo = new MemberVo(
@@ -70,7 +67,7 @@ public class MemberDAO extends BaseDao<MemberVo> {
 						);
 				list.add(vo);
 			}
-			conn.close();
+			dataBaseUtils.closeConnection();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,14 +79,13 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	public boolean isMemberById(String id) {
 		boolean isId = false;
 		try {
-			Connection conn = DataBaseUtils.getInstance().getConnection();
 			String query = "SELECT COUNT(*) FROM " + TABLE_NAME_MEMBER +" WHERE id = '" + id + "';";
 			System.out.println("query : "+ query);
-			ResultSet rs = conn.createStatement().executeQuery(query);
+			ResultSet rs = dataBaseUtils.executeQuery(query);
 			rs.next(); //TODO HSCHOE 이거 나중에 꼭 리펙토링 해야함 너무 더러움
 			int count = rs.getInt(1);
-			isId = (count > 0)? true : false; //아이디 가 있으면 true 아니면 false	
-			conn.close();
+			isId = (count > 0)? true : false; //아이디 가 있으면 true 아니면 false
+			dataBaseUtils.closeConnection();
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

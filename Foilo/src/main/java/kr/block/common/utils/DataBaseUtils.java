@@ -1,6 +1,7 @@
 package kr.block.common.utils;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.naming.Context;
@@ -8,16 +9,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-/***
- * @author choehyeonseong
- * @FIXME 이거 내일 강사님 께 검증.
- * 커넥션 객체를 디비 연결시에 계속 호출하니 메모리릭이 나서 DAO 의 생성자에 넣어서 처리 
- * 생각해보니 만약 DAO Class가 여러 개 만들어지는 상황이라면 Connect가 여러 개 생성되니까 다시 메모리릭이 발생할수 있을것같음.
- * 그래서 싱글톤으로 빼놨는데 어짜피 connection은 close를 하게되면.. conn의 기능이 단순 쿼리 조회 만들 위해 사용된다면 여기서 데이터를 넘기는 식으로 구현되고 close되어도될지. 
- */
 public class DataBaseUtils {
 	private static DataBaseUtils instance = null;
-	private Connection connection = null;
+	private static Connection connection = null;
 	
 	//DataBaseUtils는 싱글톤 객체이기 때문에 생성자를 Private로 선언한다.
 	private DataBaseUtils() {} 
@@ -25,14 +19,44 @@ public class DataBaseUtils {
 	public static DataBaseUtils getInstance() {
 		if(instance == null) {
 			instance = new DataBaseUtils();
+			createConnection();
 		}
 		return instance;
 	}
-	/***
-	 * 커넥션 객체 반환.
-	 * @return
+	
+	/**
+	 * 데이터 조회문
 	 */
-	public Connection getConnection() {
+	public synchronized ResultSet executeQuery(String query) throws SQLException {
+		createConnection();
+		System.out.println("excuteQuery : "+ query);
+		ResultSet resultSet = connection.createStatement().executeQuery(query);
+		return resultSet; 
+	}
+	/***
+	 * 업데이트 쿼리 실행 -> 데이터 삽입 삭제 업데이트등.
+	 */
+	public synchronized int updateQuery(String query) throws SQLException {
+		System.out.println("updateQuery : "+ query);
+		createConnection();
+		int result = connection.createStatement().executeUpdate(query);
+		return result;
+	}
+	
+	/***
+	 * 커넥션 객체 닫기
+	 * @throws SQLException
+	 */
+	public synchronized void closeConnection() throws SQLException {
+		if(connection != null || !connection.isClosed()) {
+			connection.close();
+		}
+	}
+	
+	/**
+	 * Connection 객체가 널이거나 닫혀 있으면 커넥션 객체를 생성함.
+	 */
+	private synchronized static void createConnection() {
 		try {
 			if(connection == null || connection.isClosed()) {
 				Context ctx = new InitialContext();
@@ -42,7 +66,5 @@ public class DataBaseUtils {
 		} catch (NamingException | SQLException e) {
 			e.printStackTrace();
 		}
-	
-		return connection;
 	}
 }
