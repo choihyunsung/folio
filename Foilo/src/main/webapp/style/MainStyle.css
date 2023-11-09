@@ -1,11 +1,14 @@
 #rootContainer {
     width: 30%;
-    height: 65px;
+    height: max-content;
 }
+
 #loginRootContainer {
     width: 100%;
-    height: 100%;
+    height: 65px;
     display: flex;
+    background-color: rgb(241, 236, 227);
+    box-shadow: 2px 2px 2px 2px gray;
 }
 
 #postItHeaderDiv {
@@ -17,6 +20,7 @@
 #loginInfoContainer {
     width: 85%;
     padding: 10px;
+    
 }
 
 .buttonStyle {
@@ -27,4 +31,16 @@
 
 #menuContainer {
     width: 13%;
+}
+
+.boardStyle {
+    width: 100%; 
+    height: 450px;
+    padding: 20px;
+}
+
+.boardTitleStyle {
+    margin: 0;
+    font-size: large;
+    font-weight: bold;
 }
