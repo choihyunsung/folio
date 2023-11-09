@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import kr.block.common.action.impl.Action;
@@ -33,7 +35,12 @@ public class LoginAction implements Action {
 			stateObject.put("isLogin", valudationLogin(id,password)); //로그인 여부 
 			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("application/json");
-			resp.getWriter().write(stateObject.toJSONString());
+			resp.getWriter().write(stateObject.toJSONString()); //데이터 보내고 
+			//TODO HSCHOE 여기서 세션을 만드는게 맞는건가 ? 아니면 새로 액션만들어서 처리되고 Main으로 이동하는것이 맞는것인지 ?
+			//일단은 구현 
+			HttpSession session = req.getSession();
+			session.setAttribute("userId", id);
+			//TODO HSCHOE 여기서 세션을 만드는게 맞는건가 ? 아니면 새로 액션만들어서 처리되고 Main으로 이동하는것이 맞는것인지 ?
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

@@ -8,6 +8,10 @@ const goJoinPage = () => {
     location.href = `Join.html`
 }
 
+const goMainPage = () => {
+	location.href = `Main.jsp`
+}
+
 
 /**로그인 버튼 중앙 정렬*/         
 function updateCenterPosition() {
@@ -38,14 +42,14 @@ const clickLoginListener = () => {
 	.then(response => response.json())
 	.then(data => {
 		const isLogin = data['isLogin']
-		const msg = data["msg"]
-		if(isLogin) {
-			alert(msg)
-		}else {
-			alert(msg)
+		if(isLogin) { //로그인 성공
+			alert(`로그인 성공`)
+			goMainPage();
+		}else { //로그인 실패 
+			alert(`로그인 실패`)
 		}
 	})
-	.catch(error => console.log("애러 로그 ", error))
+	.catch(error => console.log("애러 로그", error))
 	
 	return false
 }
