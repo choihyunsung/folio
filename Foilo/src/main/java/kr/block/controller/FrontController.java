@@ -69,6 +69,7 @@ public class FrontController extends HttpServlet {
 	 * @param url 이동할 url
 	 */
 	private void moveToPage(HttpServletResponse response, ResponseMethodType respType, String url) {
+		System.out.println("respType : " + respType.typeCode + ", url  : " + url);
 		try {
 			switch(respType) {
 				case Redirect://리다이렉트

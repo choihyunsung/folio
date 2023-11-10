@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="kr.block.model.member.vo.MemberVo" %>
 <!DOCTYPE html>
+
 <% 
-String userId = (String)session.getAttribute("userId");
-System.out.println("UserId : " + userId);
+System.out.println("서블릿 진입");
+MemberVo memberInfo = (MemberVo)session.getAttribute("memberInfo");
+System.out.println("UserId : " + memberInfo.getId() + ", cstNm : " + memberInfo.getCstNm());
 %>
 <html>
 <head>
@@ -17,7 +20,7 @@ System.out.println("UserId : " + userId);
         <div class="loginRootContainer" id="loginRootContainer"> <!--로그인 루트-->
             <div id="postItHeaderDiv"></div>
             <div id="loginInfoContainer">
-                <label class="nomalTitleStyle" id="idLabel">아이디 : '<%=userId%>' 님 반갑습니다 :)</label>
+                <label class="nomalTitleStyle" id="idLabel">아이디 : '<%=memberInfo.getCstNm()%>' 님 반갑습니다 :)</label>
             </div>
             <div id="menuContainer">
                 <button class="buttonStyle" id="myPage">설정</button><br>

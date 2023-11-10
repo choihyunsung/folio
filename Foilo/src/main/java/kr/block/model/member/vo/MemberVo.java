@@ -56,5 +56,13 @@ public class MemberVo extends BaseVo {
 	public String getAboutMe() {
 		return aboutMe;
 	}
+	
+	/***
+	 * 현재 패스워드는 암호화 되어 있지 않고 암호화 되어있어도 프론트단에 내려줄 이유가 없기에 해당 메소드를 만듬.
+	 * Setter로 변경 하고 싶으나 VO는 ReadOnly이기에 함수로 제공함.
+	 */
+	public void resetPassword() {
+		this.password ="민감한 부분이라 제거";
+	}
 
 }
