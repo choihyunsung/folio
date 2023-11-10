@@ -19,13 +19,14 @@ const goMainPage = () => {
 
 /**로그인 버튼 중앙 정렬*/         
 function updateCenterPosition() {
-    const centerX = window.outerWidth/2
-    const centerY = window.outerHeight/2
+    const centerX = window.innerWidth/2
+    const centerY = window.innerHeight/2
     const loginContainer = document.getElementById("loginContainer")
     const loginCenterX = loginContainer.clientWidth/2
     const loginCenterY = loginContainer.clientHeight/2
     loginContainer.style.left = (centerX - loginCenterX) + 'px'
     loginContainer.style.top = (centerY - loginCenterY)+ 'px'
+     console.log(`updateCenterPosition ${centerY}`)
 }
 //리스너 선언 부 
 const clickLoginListener = ()=> {
@@ -48,7 +49,7 @@ const clickLoginListener = ()=> {
 		if(isLogin) { //로그인 성공
 			alert(`로그인 성공`)
 			fetch(URL_FOLIO_LOGIN+`?id=${idValue}`)
-			.then(data =>{goMainPage()})
+			.then(data => { goMainPage() })
 			.catch(error =>console("에러 :", error))
 		}else {
 			alert(`로그인 실패`)
@@ -62,7 +63,7 @@ window.addEventListener('resize',()=> {
     console.log("resize")
 	setTimeout(() => {
     	updateCenterPosition()
-	},100)
+	},50)
 })
 
 //DOM이 로드 완료될시에 

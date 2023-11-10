@@ -2,12 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="kr.block.model.member.vo.MemberVo" %>
 <!DOCTYPE html>
-
-<% 
-System.out.println("서블릿 진입");
-MemberVo memberInfo = (MemberVo)session.getAttribute("memberInfo");
-System.out.println("UserId : " + memberInfo.getId() + ", cstNm : " + memberInfo.getCstNm());
-%>
+<% MemberVo memberInfo = (MemberVo)session.getAttribute("memberInfo");%>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -24,7 +19,7 @@ System.out.println("UserId : " + memberInfo.getId() + ", cstNm : " + memberInfo.
             </div>
             <div id="menuContainer">
                 <button class="buttonStyle" id="myPage">설정</button><br>
-                <button class="buttonStyle" id="buttonLogout" type="button">로그아웃</button> <br>
+                <button class="buttonStyle" id="buttonLogout" type="button" onclick="onLogout()">로그아웃</button> <br>
             </div>
         </div>
         <div class="boardStyle" id="boardContainer"> <!-- 컨텐츠 영역으로 사용될 녀석 일종의 프레그먼트. -->

@@ -142,8 +142,8 @@ function goLogin() {
 }
 /*로그인 버튼 중앙 정렬*/         
 function updateCenterPosition() {
-    const centerX = window.outerWidth/2 
-    const centerY = window.outerHeight/2
+    const centerX = window.innerWidth/2
+    const centerY = window.innerHeight/2
     const loginContainer = document.getElementById("joinRoot")
     const loginCenterX = loginContainer.clientWidth/2
     const loginCenterY = loginContainer.clientHeight/2
