@@ -1,4 +1,4 @@
-package kr.block.common.action;
+package kr.block.common.action.nomove;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -6,14 +6,19 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import kr.block.common.action.impl.Action;
+import kr.block.common.action.base.BaseAction;
+import kr.block.common.action.base.BaseDAOAction;
+import kr.block.common.action.impl.ActionImpl;
 import kr.block.common.object.Pair;
 import kr.block.common.type.ResponseMethodType;
 import kr.block.model.member.dao.MemberDAO;
+import kr.block.model.member.vo.MemberVo;
 
-public class IdCheckedAction implements Action {
+public class IdCheckedAction extends BaseDAOAction<MemberVo, MemberDAO> {
 
-	private MemberDAO dao = new MemberDAO(); //Id를 체크할 MomberDAO
+	public IdCheckedAction() {
+		this.dao = new MemberDAO();
+	}
 	
 	@Override
 	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {
@@ -33,7 +38,7 @@ public class IdCheckedAction implements Action {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return new Pair<ResponseMethodType, String>(ResponseMethodType.NONE, "");
 	}
 
 }

@@ -1,4 +1,4 @@
-package kr.block.common.action;
+package kr.block.common.action.nomove;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,15 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import kr.block.common.action.impl.Action;
+import kr.block.common.action.base.BaseDAOAction;
+import kr.block.common.action.impl.ActionImpl;
 import kr.block.common.object.Pair;
 import kr.block.common.type.ResponseMethodType;
 import kr.block.common.utils.StringUtils;
+import kr.block.model.member.dao.BoardDAO;
 import kr.block.model.member.dao.MemberDAO;
 import kr.block.model.member.vo.MemberVo;
 
-public class LoginCheckAction implements Action {
+public class LoginCheckAction extends BaseDAOAction<MemberVo, MemberDAO> {
 
+	public LoginCheckAction() {
+		this.dao = new MemberDAO();
+	}
+	
 	@Override
 	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {
 

@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import kr.block.common.action.impl.Action;
+import kr.block.common.action.impl.ActionImpl;
 
 /***
  * 
@@ -16,7 +16,7 @@ import kr.block.common.action.impl.Action;
  * 사용될 Action의 매핑 작업을 처리 
  */
 public class ActionMapper {
-	private HashMap<String, Action> actionMap = new HashMap<String, Action>();
+	private HashMap<String, ActionImpl> actionMap = new HashMap<String, ActionImpl>();
 	private Properties prop = new Properties();
 	
 	public ActionMapper(ServletContext sc, String mappingParamName) {
@@ -29,7 +29,7 @@ public class ActionMapper {
 				String className = prop.getProperty(uri); //Action ClassString
 				Class<?> actionClass = Class.forName(className);
 				Constructor<?> constructor = actionClass.getConstructor(null);
-				Action action = (Action)constructor.newInstance();
+				ActionImpl action = (ActionImpl)constructor.newInstance();
 				actionMap.put(uri, action);
 			}
 		} catch (Exception e) {
@@ -38,9 +38,9 @@ public class ActionMapper {
 		}
 	}
 	/**등록되어 있는 ActionMap을 반환*/
-	public HashMap<String, Action> getActionMap() { return actionMap; }
+	public HashMap<String, ActionImpl> getActionMap() { return actionMap; }
 	/**프로퍼티를 반환*/
 	public Properties getProp() { return prop; }
 	/**해당 Uri의 Action을 반환 */
-	public Action getAction(String uri) { return actionMap.get(uri); }	
+	public ActionImpl getAction(String uri) { return actionMap.get(uri); }	
 }

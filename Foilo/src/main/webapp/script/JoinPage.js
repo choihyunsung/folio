@@ -1,8 +1,11 @@
 //변수 선언문 시작
+const idInput = document.getElementById("inputId") //아이디 입력창.
 const pwdInput = document.getElementById("passwordInput") //패스워드 인풋
 const pwdChecked = document.getElementById("passwordChecked"); //패스워드 체크
 const emailInput = document.getElementById("emailInput") //이메일 input 창.
-const idInput = document.getElementById("inputId") //아이디 입력창.
+const nameInput = document.getElementById("inputName") //이름입력창
+const addressInput = document.getElementById("addressInput")//주소 입력창 
+const contentInput = document.getElementById("inputAboutMe")//자기소개
 //벨류데이션 에러 메세지 정의
 
 const ERROR_PASSWORD_VALUDATION = "입력한 비밀번호가 올바르지 않습니다."
@@ -14,7 +17,9 @@ const ERROR_ID_DUPLICATE_VALUDATION = "이미 등록된 아이디가 있습니�
 const ERROR_ID_VALUDATION = "입력한 아이디가 올바르지 않습니다."
 //비동기 URL 정의 
 const URL_LOCAL_HOST = "http://localhost:8080"
-const URL_FOLIO_ID_CHECKED = URL_LOCAL_HOST + "/Foilo/IdCheckedAction.do" //회원가입 아이디 체크
+const URL_FOLIO_ID_CHECKED = URL_LOCAL_HOST + "/Foilo/IdCheckedAction.do" //회원 아이디 중복 체크 
+const URL_FOLIO_MOVE_TO_LOGIN = URL_LOCAL_HOST + "/Foilo/MoveToLoginAction.do" //로그인으로 이동.
+const URL_FOLIO_JOIN = URL_LOCAL_HOST + "/Foilo/JoinAction.do" //로그인으로 이동.
 
 let isIdChecked = false; //아이디 체크 불린값 @TODO HSCHOE이거 나중에 리펙토링 꼭해야함 
 
@@ -41,7 +46,6 @@ const valudationCheckedAll = () => {
 	if(!isIdChecked){
 		window.alert(ERROR_ID_VALUDATION)		
 		idInput.focus()
-		return false
 	}else if((pwdInput.value === "" && pwdChecked.value === "") || !pwdValudation(pwdInput.value, pwdChecked.value)) {
 		window.alert(ERROR_PASSWORD_VALUDATION)
 		if(pwdInput.value === "") {
@@ -49,20 +53,49 @@ const valudationCheckedAll = () => {
 		}else {
 			pwdChecked.focus();
 		}
-		return false
 	}else if(!emailValudation(emailInput.value) || emailInput.value === "") {
 		window.alert(ERROR_EMAIL_VALUDATION)
 		emailInput.focus();
-		return false
 	}else if(nameInput.value === "") {
 		window.alert(ERROR_NAME_VALUDATION)
 		nameInput.focus();
 	}else if(addressInput.value ===""){
 		window.alert(ERROR_ADDRESS_VALUDATION)
 		addressInput.focus();
-		return false 
 	}else {
-		return true
+	const id = idInput.value
+	const password = pwdInput.value
+	const name = nameInput.value
+	const gender = document.querySelector(`input[name="gender"]:checked`).value
+	const email = emailInput.value
+	const address = addressInput.value
+	const aboutMe = contentInput.value
+	console.log(`id = ${id}, password : ${password},email : ${email},name : ${name}, address : ${address}, aboutMe :${aboutMe} gender : ${gender}`)
+
+	fetch(URL_FOLIO_JOIN, {
+		method: `POST`,
+		headers: {
+			"Content-Type" : "application/json"
+		},
+		body: JSON.stringify({
+			"id" : id, 
+			"password" : password,
+			"name" : name,
+			"gender" : gender,
+			"email" : email,
+			"address" : address,
+			"aboutMe" : aboutMe
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		const isJoin = data['isJoin']
+		if(isJoin) { //로그인 성공
+			alert(`회원가입 성공`)
+			goLogin()
+		}
+	})
+	.catch(error => console.log("애러 로그", error))
 	}
 }
 
@@ -103,6 +136,10 @@ const valudationCheckedIdListener = () => {
 }
 
 //함수 선언문
+/**로그인 화면으로 이동 */
+function goLogin() {
+	location.href = URL_FOLIO_MOVE_TO_LOGIN
+}
 /*로그인 버튼 중앙 정렬*/         
 function updateCenterPosition() {
     const centerX = window.outerWidth/2 

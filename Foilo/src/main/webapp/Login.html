@@ -6,20 +6,18 @@
     <link rel="stylesheet" href="./style/LoginStyle.css">
 <body>
     <div id="loginContainer">
-        <form id="login_form" name="login_form" method="post" onsubmit="return clickLoginListener()">
-            <div id="loginBox">
-                <p id="loginBoxTitle">로그인</p>
-                <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요"><br>
-                <input type="password" id="userPassword" name="userPassword" placeholder="패스워드를 입력하세요"><br>
-                <button id="login" name="login" type="submit">로그인</button>
-                <button id="signUp" name="signUp" type="button" onclick="goJoinPage()">회원가입</button>
-            </div>
-            <div id="ssoLoginBox">
-                <p id="ssoBoxTitle">SSO 로그인</p>
-                <button id="ssoLoginGoogle">Google Login</button><br>
-                <button id="ssoLoginKakao">Kakao Login </button>
-            </div>
-            </form>
+	    <div id="loginBox">
+	        <p id="loginBoxTitle">로그인</p>
+	        <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요"><br>
+	        <input type="password" id="userPassword" name="userPassword" placeholder="패스워드를 입력하세요"><br>
+	        <button id="login" name="login" type="submit" onclick="clickLoginListener()">로그인</button>
+	        <button id="signUp" name="signUp" type="button" onclick="goJoinPage()">회원가입</button>
+	    </div>
+	    <div id="ssoLoginBox">
+	        <p id="ssoBoxTitle">SSO 로그인</p>
+	        <button id="ssoLoginGoogle">Google Login</button><br>
+	        <button id="ssoLoginKakao">Kakao Login </button>
+	    </div>
     </div>
     <script src="./script/LoginPage.js"></script>
 </body>
