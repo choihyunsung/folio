@@ -61,9 +61,7 @@ const clickLoginListener = ()=> {
 //windows가 갱신시
 window.addEventListener('resize',()=> {
     console.log("resize")
-	setTimeout(() => {
-    	updateCenterPosition()
-	},50)
+	updateCenterPosition()
 })
 
 //DOM이 로드 완료될시에 

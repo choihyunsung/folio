@@ -11,6 +11,16 @@
     box-shadow: 2px 2px 2px 2px gray;
 }
 
+
+#settingRootContainer {
+    width: 70%;
+    height: min-content;
+    margin: auto;
+    padding: 20px;
+    background-color: rgb(241, 236, 227);
+    box-shadow: 2px 2px 2px 2px gray;
+}
+
 #postItHeaderDiv {
     width: 15%;
     box-shadow: 1px 1px 1px 1px gray;
@@ -34,13 +44,33 @@
 }
 
 .boardStyle {
+	display: flex;
+ 	justify-content:center; 
+    align-items : center;	
     width: 100%; 
     height: 450px;
-    padding: 20px;
 }
 
 .boardTitleStyle {
     margin: 0;
     font-size: large;
     font-weight: bold;
+}
+
+#settingTitle{
+	margin:0px;
+}
+
+.settingNomalButton{
+	margin: 10px;
+	background-color: rgb(241, 236, 227);
+    box-shadow: 1px 1px gray;
+}
+
+.settingTextInput{
+	padding-left:3px;
+	padding-top:3px;
+	padding-bottom:3px;
+    border-radius: 5px;
+	width: 100%;
 }

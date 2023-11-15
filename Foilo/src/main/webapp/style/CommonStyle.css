@@ -45,6 +45,14 @@ textarea {
     padding-bottom: 2px;
 }
 
+.nomalButtonStyle {
+	width: 20%;
+	height: 10%;
+	margin:10px;
+    background-color: rgb(241, 236, 227);
+    box-shadow: 1px 1px gray;
+}
+
 input {
     margin-top: 2px;
     margin-bottom: 2px;

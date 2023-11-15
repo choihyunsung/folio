@@ -28,9 +28,7 @@ let isIdChecked = false; //아이디 체크 불린값 @TODO HSCHOE이거 나중�
 //windows가 갱신시
 window.addEventListener('resize',() => {
     console.log("resize")
-    setTimeout(() => {
-        updateCenterPosition()
-    },50)
+    updateCenterPosition()
 })
 
 //DOM이 로드 완료될시에 

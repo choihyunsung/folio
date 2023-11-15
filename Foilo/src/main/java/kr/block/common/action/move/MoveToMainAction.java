@@ -15,7 +15,6 @@ public class MoveToMainAction extends BaseAction{
 
 	@Override
 	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {
-		// TODO Auto-generated method stub
 		return new Pair<ResponseMethodType, String>(ResponseMethodType.Redirect, UrlProperties.URL_MAIN_PAGE);
 	}
 
