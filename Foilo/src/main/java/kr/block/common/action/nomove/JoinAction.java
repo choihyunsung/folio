@@ -12,7 +12,7 @@ import org.json.simple.parser.ParseException;
 import kr.block.common.action.base.BaseDAOAction;
 import kr.block.common.object.Pair;
 import kr.block.common.type.ResponseMethodType;
-import kr.block.common.utils.StringUtils;
+import kr.block.common.utils.JsonUtils;
 import kr.block.model.member.dao.MemberDAO;
 import kr.block.model.member.vo.MemberVo;
 
@@ -32,8 +32,7 @@ public class JoinAction extends BaseDAOAction<MemberVo, MemberDAO> {
 		while((line = bufferedReader.readLine())!= null) {
 				builder.append(line);
 		}
-		JSONObject memberJson = StringUtils.getStringToJson(builder.toString());
-		MemberDAO dao = new MemberDAO();
+		JSONObject memberJson = JsonUtils.getStringToJson(builder.toString());
 		dao.insert(parserVo(memberJson));
 		//FIXME HSCHOE해당 코드 false일때 예외 처리 해야하지만 지금 급해서 그냥 둠 나중에 무조건 처리하도록 
 		JSONObject stateObject = new JSONObject();

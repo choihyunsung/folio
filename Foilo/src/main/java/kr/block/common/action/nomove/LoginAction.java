@@ -11,7 +11,7 @@ import kr.block.common.action.impl.ActionImpl;
 import kr.block.common.object.Pair;
 import kr.block.common.prop.UrlProperties;
 import kr.block.common.type.ResponseMethodType;
-import kr.block.common.utils.StringUtils;
+import kr.block.common.utils.JsonUtils;
 import kr.block.model.member.dao.MemberDAO;
 import kr.block.model.member.vo.MemberVo;
 
@@ -32,7 +32,7 @@ public class LoginAction extends BaseDAOAction<MemberVo, MemberDAO> {
 			MemberVo loginMemberVo = dao.getMemberById((String)req.getParameter("id"));
 			loginMemberVo.resetPassword();
 			HttpSession session = req.getSession();
-			session.setAttribute("memberInfo", StringUtils.getVoJson(loginMemberVo));
+			session.setAttribute("memberInfo", JsonUtils.getVoJson(loginMemberVo));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

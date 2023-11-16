@@ -6,8 +6,10 @@ import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.block.common.base.vo.BaseVo;
+import kr.block.model.member.vo.MemberVo;
 
 /***
  * 싱글톤이 아니라 그냥 단순히 스트링을 반환하는 메소드만을 모와놓은 스택틱 클래스로 사용함.
@@ -15,7 +17,7 @@ import kr.block.common.base.vo.BaseVo;
  * @author choehyeonseong
  *
  */
-public class StringUtils {
+public class JsonUtils {
 	/***
 	 * @param json JSON 형식의 포멧으로된 String
 	 * @return JsonObect 반환
@@ -40,5 +42,17 @@ public class StringUtils {
 			e.printStackTrace();      
 			return null;
 		}       
+	}
+	
+	/***
+	 * 
+	 * @param <VO> 변경될 VO타
+	 * @param json 해당 VO
+	 * @param cls  변경될 VO 객체에 Class
+	 * @return
+	 */
+	public static<VO extends BaseVo> VO getJsonToVO(String json, Class<VO> cls) {
+		Gson gson = new Gson();
+		return gson.fromJson(json.toString(),cls); 
 	}
 }

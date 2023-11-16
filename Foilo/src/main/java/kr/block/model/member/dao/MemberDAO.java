@@ -18,6 +18,7 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	
 	private final static String TABLE_NAME_MEMBER = "member"; 
 	private DataBaseUtils dataBaseUtils = DataBaseUtils.getInstance();
+	
 	@Override
 	public void insert(MemberVo vo) {
 		try {
@@ -118,9 +119,19 @@ public class MemberDAO extends BaseDao<MemberVo> {
 		}
 		return memberVo;
 	}
-
+	/***
+	 * 회원의 cno로 데이터 베이스에서 계정을 삭제.
+	 * @param vo 계정의 vo 객체
+	 */
 	@Override
 	public void delete(MemberVo vo) {
+		try {
+			String query = "DELETE FROM " + TABLE_NAME_MEMBER + 
+						   " WHERE cno = "+vo.getCno();
+				dataBaseUtils.updateQuery(query);
+		} catch (SQLException e) {
+				e.printStackTrace();
+		}
 	}
 
 	@Override

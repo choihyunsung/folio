@@ -3,6 +3,7 @@
 const URL_LOCAL_HOST = "http://localhost:8080"
 const URL_FOLIO_MAIN_TO_LOGIN = URL_LOCAL_HOST + "/Foilo/MoveToLoginAction.do" //로그인으로 이동.
 const URL_FOLIO_LOGOUT = URL_LOCAL_HOST + "/Foilo/LogoutAction.do" //로그아웃 액션 
+const URL_FOLIT_DELETE_ACCOUNT = URL_LOCAL_HOST + "/Foilo/DeleteAccountAction.do" //회원 탈퇴
 
 const contentDiv = document.getElementById("boardContainer")
 
@@ -31,39 +32,72 @@ const onLoadPrintBoard = () => {
 }
 
 const onLoadSetting = (info) => {
-	const memberInfo = JSON.parse(info)
-	const male =(memberInfo.gender === "남")? 'checked' : '';
-	const fmale =(memberInfo.gender === "여")? 'checked' : '';
+	const memberInfoJSON = JSON.parse(info)
+	const male =(memberInfoJSON.gender === "남")? 'checked' : '';
+	const fmale =(memberInfoJSON.gender === "여")? 'checked' : '';
 	/*세팅 화면*/
 	 contentDiv.innerHTML = "<div id='settingRootContainer'>"+
 	 							"<p class='nomalTitleStyle' id='settingTitle'>설정화면</p><br>"+
 	 							"<p class='subTitleStyle'>이름</p>"+
-	 							`<input class='settingTextInput' id='modifyName' type='text' value=${ memberInfo['cstNm'] }><br>`+
+	 							`<input class='settingTextInput' id='modifyName' type='text' value=${ memberInfoJSON['cstNm'] }><br>`+
  								"<p class='subTitleStyle'>성별</p>"+
  								"<label><input id='selectGender' name='gender' type='radio' value='남' "+male+">남</label>"+
 	                    		"<label><input id='selectGender' name='gender' type='radio' value='여' "+fmale+">여</label><br>"+
 								"<p class='subTitleStyle'>이메일</p>"+
-								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfo['email']}'><br>`+
+								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfoJSON['email']}'><br>`+
 								`<p class='subTitleStyle'>주소</p>`+
-								`<input class='settingTextInput' id='modifyAddress' type='text' value='${memberInfo['address']}'><br>`+
+								`<input class='settingTextInput' id='modifyAddress' type='text' value='${memberInfoJSON['address']}'><br>`+
 								`<p class='subTitleStyle'>자기소개</p>`+
-	 							`<textarea class='settingTextInput'>${ memberInfo['aboutMe'] })}</textarea><br>`+
-	 							"<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount()'>회원 탈퇴</button>"+
+	 							`<textarea class='settingTextInput'>${ memberInfoJSON['aboutMe'] })}</textarea><br>`+
+	 							`<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount(${info})'>회원 탈퇴</button>`+
 	 							"<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy()'>비밀번호 변경하기</button>" +
-	 							"<button class='settingNomalButton' id='modifyOkay' onclick='modfiyOkay()'>수정 완료</button>"
+	 							"<button class='settingNomalButton' id='modifyOkay' onclick='modfiyOkay()'>수정 완료</button>"+
 	 						"</div>"
 }
 
 const passWordModfiy = () => {
-	confirm("비밀번호를 변경하시겠어요?")
+	if(confirm("비밀번호를 변경하시겠어요?")) {
+		
+	} else {
+		
+	}
 }
 
-const deleteAccount = () => {
-	confirm("회원을 탈퇴하시겠습니까?")
+const deleteAccount = (info) => {
+	if(confirm("회원을 탈퇴하시겠습니까?")) {
+		console.log(info)
+		//회원탈퇴에 JSON 파라메터 보냄
+		fetch(URL_FOLIT_DELETE_ACCOUNT, {
+			method: 'POST',
+			headers: {
+				"Content-Type" : "application/json"
+			},
+			body: JSON.stringify(info)
+		})
+		.then(response => response.json())
+		.then(data => {
+				const isDelAccount = data['isDeleteAccount']
+				console.log(data + `isDelAccount : ${isDelAccount}`)
+				if(isDelAccount) {
+					alert("회원탈퇴가 완료되었습니다. 로그인 화면으로 이동합니다.")
+					goLoginPage();
+				} else {
+					alert("알수 없는 이유로 회원 탈퇴 실패 되었습니다.")
+				}
+			}
+		)
+		.catch(error => console.error("에러: ",error))
+	} else {
+		//아무것도 안함.
+	}
 }
 
 const modfiyOkay = () => {
-	confirm("수정을 완료 하시겠습니까?")
+	if(confirm("수정을 완료 하시겠습니까?")) {
+		
+	} else {
+		
+	}
 }
 
 const goLoginPage = () => {
