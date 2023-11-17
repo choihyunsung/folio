@@ -4,6 +4,7 @@ const URL_LOCAL_HOST = "http://localhost:8080"
 const URL_FOLIO_MAIN_TO_LOGIN = URL_LOCAL_HOST + "/Foilo/MoveToLoginAction.do" //로그인으로 이동.
 const URL_FOLIO_LOGOUT = URL_LOCAL_HOST + "/Foilo/LogoutAction.do" //로그아웃 액션 
 const URL_FOLIT_DELETE_ACCOUNT = URL_LOCAL_HOST + "/Foilo/DeleteAccountAction.do" //회원 탈퇴
+const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
 
 const contentDiv = document.getElementById("boardContainer")
 
@@ -57,9 +58,9 @@ const onLoadSetting = (info) => {
 
 const passWordModfiy = () => {
 	if(confirm("비밀번호를 변경하시겠어요?")) {
-		
+		showPasswordModifyPopUp()
 	} else {
-		
+		//아무것도 안함.
 	}
 }
 
@@ -102,6 +103,14 @@ const modfiyOkay = () => {
 
 const goLoginPage = () => {
 	location.href = URL_FOLIO_MAIN_TO_LOGIN
+}
+
+const showPasswordModifyPopUp = () => {
+		// JS
+		var popupWidth = 250;
+		var popupHeight = 250;
+		var options = `top = ${ 10 }, left = ${ 10 }, width = ${ popupWidth }, height = ${ popupHeight }`;
+		window.open(URL_PAGE_POPUP_PASSWORD_MODIFY, "비밀번호 변경", options);
 }
 
 /**화면 중앙 정렬 버튼 중앙 정렬*/         

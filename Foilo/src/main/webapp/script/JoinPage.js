@@ -253,6 +253,5 @@ function elementHideAll(...elementList) {
 }
 
 /* TODO LIST
- * 뒤로가기시에 레이아웃 깨지는 현상 수정. (임시 보류)
  * 미디어 쿼리 학습!
  */ 
