@@ -16,14 +16,14 @@ import kr.block.common.utils.JsonUtils;
 import kr.block.model.member.dao.MemberDAO;
 import kr.block.model.member.vo.MemberVo;
 
-public class PasswordModifyAction extends BaseDAOAction<MemberVo, MemberDAO>{
+public class PasswordCheckedAction extends BaseDAOAction<MemberVo, MemberDAO>{
 	
-	public PasswordModifyAction() {
+	public PasswordCheckedAction() {
 		dao = new MemberDAO();
 	}
 
 	@Override
-	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {	
+	public Pair<ResponseMethodType, String> excute(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			StringBuilder builder = new StringBuilder();                                                                                                                                   
 			BufferedReader bufferedReader = req.getReader();
@@ -34,12 +34,14 @@ public class PasswordModifyAction extends BaseDAOAction<MemberVo, MemberDAO>{
 			System.out.println(builder.toString());
 			JSONObject jsonObject = JsonUtils.getStringToJson(builder.toString());
 			String id = jsonObject.get("id").toString();
-			String inputPassword = jsonObject.get("password").toString();	
+			String password = dao.getPasswordById(id);
+			String inputPassword = jsonObject.get("password").toString();		
 			JSONObject stateObject = new JSONObject();
-			stateObject.put("isModifyOkay", dao.modifyPasswordById(id, inputPassword)); //로그인 여부 
+			stateObject.put("isPasswordChecked", password.equals(inputPassword)); //로그인 여부 
 			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("application/json");
-			resp.getWriter().write(stateObject.toJSONString()); //데이터 보내고 		
+			resp.getWriter().write(stateObject.toJSONString()); //데이터 보내고 
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

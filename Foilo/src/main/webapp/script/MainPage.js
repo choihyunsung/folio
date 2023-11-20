@@ -42,8 +42,8 @@ const onLoadSetting = (info) => {
 	 							"<p class='subTitleStyle'>이름</p>"+
 	 							`<input class='settingTextInput' id='modifyName' type='text' value=${ memberInfoJSON['cstNm'] }><br>`+
  								"<p class='subTitleStyle'>성별</p>"+
- 								"<label><input id='selectGender' name='gender' type='radio' value='남' "+male+">남</label>"+
-	                    		"<label><input id='selectGender' name='gender' type='radio' value='여' "+fmale+">여</label><br>"+
+ 								"<label><input id='selectGender' name='gender' type='radio' value='남' " + male + ">남</label>"+
+	                    		"<label><input id='selectGender' name='gender' type='radio' value='여' " + fmale + ">여</label><br>"+
 								"<p class='subTitleStyle'>이메일</p>"+
 								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfoJSON['email']}'><br>`+
 								`<p class='subTitleStyle'>주소</p>`+
@@ -51,14 +51,14 @@ const onLoadSetting = (info) => {
 								`<p class='subTitleStyle'>자기소개</p>`+
 	 							`<textarea class='settingTextInput'>${ memberInfoJSON['aboutMe'] })}</textarea><br>`+
 	 							`<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount(${info})'>회원 탈퇴</button>`+
-	 							"<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy()'>비밀번호 변경하기</button>" +
+	 							`<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy("${memberInfoJSON['id']}")'>비밀번호 변경하기</button>` +
 	 							"<button class='settingNomalButton' id='modifyOkay' onclick='modfiyOkay()'>수정 완료</button>"+
 	 						"</div>"
 }
 
-const passWordModfiy = () => {
+const passWordModfiy = (id) => {
 	if(confirm("비밀번호를 변경하시겠어요?")) {
-		showPasswordModifyPopUp()
+		showPasswordModifyPopUp(id)
 	} else {
 		//아무것도 안함.
 	}
@@ -105,14 +105,16 @@ const goLoginPage = () => {
 	location.href = URL_FOLIO_MAIN_TO_LOGIN
 }
 
-const showPasswordModifyPopUp = () => {
+const showPasswordModifyPopUp = (id) => {	
 		// JS
+		console.log("id : "+ id)
 		var popupWidth = 250;
-		var popupHeight = 250;
-		var options = `top = ${ 10 }, left = ${ 10 }, width = ${ popupWidth }, height = ${ popupHeight }`;
-		window.open(URL_PAGE_POPUP_PASSWORD_MODIFY, "비밀번호 변경", options);
+		var popupHeight = 300;
+		var options = `top = ${ 10 }, left = ${ 10 }, width = ${ popupWidth }, height = ${ popupHeight }`
+		//자바스크립트 ㅋㅋ 스페이스 %20으로 치환되서 get에다 스페이스 넣으면 큰일남
+		window.open(URL_PAGE_POPUP_PASSWORD_MODIFY+`?userId=${id}`, "비밀번호 변경", options)
+	
 }
-
 /**화면 중앙 정렬 버튼 중앙 정렬*/         
 function updateCenterPosition() {
     const centerX = window.innerWidth/2
