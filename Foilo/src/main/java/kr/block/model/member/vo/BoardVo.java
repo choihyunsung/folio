@@ -3,7 +3,9 @@ package kr.block.model.member.vo;
 import java.sql.Date;
 
 import kr.block.common.base.vo.BaseVo;
+import lombok.Getter;
 
+@Getter
 public class BoardVo extends BaseVo{
 	private int no; //글번호 
 	private int cno; //작성자 회원번호 (fk)
@@ -19,27 +21,4 @@ public class BoardVo extends BaseVo{
 		this.title = title;
 		Content = content;
 	}
-
-	public int getNo() {
-		return no;
-	}
-
-	public int getCno() {
-		return cno;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getContent() {
-		return Content;
-	}
-	
-	
-	
 }

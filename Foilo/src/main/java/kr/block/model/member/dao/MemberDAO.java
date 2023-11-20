@@ -62,10 +62,8 @@ public class MemberDAO extends BaseDao<MemberVo> {
 				list.add(vo);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//TODO TESTLINE 나중에 공통으로 처리 
 		return list;
 	}
 	
@@ -80,7 +78,7 @@ public class MemberDAO extends BaseDao<MemberVo> {
 			String query = "SELECT COUNT(*) FROM " + TABLE_NAME_MEMBER +" WHERE id = '" + id + "';";
 			System.out.println("query : "+ query);
 			ResultSet rs = dataBaseUtils.executeQuery(query);
-			rs.next(); //TODO HSCHOE 이거 나중에 꼭 리펙토링 해야함 너무 더러움
+			rs.next();
 			int count = rs.getInt(1);
 			isId = (count > 0)? true : false; //아이디 가 있으면 true 아니면 false
 		}catch (SQLException e) {
@@ -88,6 +86,31 @@ public class MemberDAO extends BaseDao<MemberVo> {
 			e.printStackTrace();
 		}
 		return isId;
+	}
+	
+	/***
+	 * 특정 회원에 비밀번호를 반환한다.
+	 * 참고 사항:
+	 * 		HSCHOE 프론트 단에서 암호를 노출하는것은 위험하기 떄문에 프론트단에서 받아온 계정의 암호를 다
+	 * 		조회하기 위한 용도로 사용하기 위해 만듬. 
+	 * @param cno 회원 번호 
+	 * @return cno 에 맞는 회원이 있으면 비밀번호를 반환 아니면 null을 반환한다.
+	 */
+	public String getPassword(int cno) {
+		String passwordColumn = "password";
+		String password = null;
+		try {
+			String query = "SELECT " + passwordColumn + " " +
+					 	   "FROM " + TABLE_NAME_MEMBER + " " + 
+					 	   "WHERE cno = " + cno + ";";
+			ResultSet rs = dataBaseUtils.executeQuery(query);
+			while(rs.next()) {
+				password = rs.getString(passwordColumn);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return password;
 	}
 	
 	/***
@@ -136,6 +159,23 @@ public class MemberDAO extends BaseDao<MemberVo> {
 
 	@Override
 	public void update(MemberVo vo) {
+		try {
+			String query = "UPDATE " +
+								TABLE_NAME_MEMBER + " " + 
+						   "SET "+
+							   "cno = " + vo.getCno() + ", " +
+							   "id = " + "'" + vo.getId() + "'"  + ", " +
+							   "password = " + "'" + vo.getPassword() + "'" + ", " +
+							   "cstNm = " + "'" + vo.getCstNm() + "'" + ", " +
+							   "gender = " + "'" + vo.getGender() + "'" + ", " +
+							   "email = " + "'" + vo.getEmail() + "'" + ", " +
+							   "address = " + "'" + vo.getAddress() + "'"  + ", " +
+							   "aboutMe = " + "'" + vo.getAboutMe()+ "'" + " " +
+						   "WHERE " + 
+							   "cno = " +vo.getCno()+ ";";
+					dataBaseUtils.updateQuery(query);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
-
 }

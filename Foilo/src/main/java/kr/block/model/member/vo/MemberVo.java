@@ -1,7 +1,9 @@
 package kr.block.model.member.vo;
 
-import kr.block.common.base.vo.BaseVo;
+import kr.block.common.base.vo.BaseVo; 
+import lombok.Getter;
 
+@Getter
 public class MemberVo extends BaseVo {
 	
 	private int cno; //회원 정보 (pk)
@@ -25,38 +27,7 @@ public class MemberVo extends BaseVo {
 	}
 
 	/*VO는 ReadOnly이므로 setter메소드를 제공하지 않음.*/
-	public int getCno() {
-		return cno;
-	}
 
-	public String getId() {
-		return id;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getCstNm() {
-		return cstNm;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public String getAboutMe() {
-		return aboutMe;
-	}
-	
 	/***
 	 * 현재 패스워드는 암호화 되어 있지 않고 암호화 되어있어도 프론트단에 내려줄 이유가 없기에 해당 메소드를 만듬.
 	 * Setter로 변경 하고 싶으나 VO는 ReadOnly이기에 함수로 제공함.

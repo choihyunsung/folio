@@ -17,7 +17,6 @@ import kr.block.model.member.vo.MemberVo;
 
 /***
  * @author choehyeonseong
- * 로그인 완료후 세션 생성 메인으로 이동 메인으로 이동 
  */
 public class LoginAction extends BaseDAOAction<MemberVo, MemberDAO> {
 
@@ -31,6 +30,11 @@ public class LoginAction extends BaseDAOAction<MemberVo, MemberDAO> {
 			req.setCharacterEncoding("UTF-8");
 			MemberVo loginMemberVo = dao.getMemberById((String)req.getParameter("id"));
 			loginMemberVo.resetPassword();
+			//TODO TESTLINE 확인후 제거
+			String testGetPass = dao.getPassword(loginMemberVo.getCno());
+			System.out.println("가져온 패스워드 : " + testGetPass);
+			dao.update(loginMemberVo);
+			//TODO TESTLINE 확인후 제거
 			HttpSession session = req.getSession();
 			session.setAttribute("memberInfo", JsonUtils.getVoJson(loginMemberVo));
 		} catch (UnsupportedEncodingException e) {

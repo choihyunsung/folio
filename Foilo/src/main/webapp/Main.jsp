@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style/CommonStyle.css">
     <link rel="stylesheet" href="./style/MainStyle.css">
-<title>Insert title here</title>
+<title>-처음부터 시작하는 간단한 홈페이지에 오신걸 환영합니다.-</title>
 </head>
 <body>
     <div class="rootContainerStyle" id="rootContainer"> <!--루트-->
