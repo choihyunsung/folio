@@ -170,6 +170,36 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	}
 	
 	/***
+	 * 회원 번호로 테이블에서 해당 아이디를 가져옴
+	 * @param cno 회원 번호 
+	 * @return 해당 회원번호 vo 반환 만약에 아이디가 없으면 null을 보낸다.
+	 */
+	public MemberVo getMemberByCno(String cno) {
+		MemberVo memberVo = null;
+		try {
+			String query = "SELECT * FROM " + TABLE_NAME_MEMBER +" WHERE cno = " + cno + ";";
+			System.out.println("query : "+ query);
+			ResultSet rs = dataBaseUtils.executeQuery(query);
+			if(rs.next()) {
+				memberVo = new MemberVo(
+					rs.getInt("cno"),
+					rs.getString("id"),
+					rs.getString("password"),
+					rs.getString("cstNm"),
+					rs.getString("gender"),
+					rs.getString("email"),
+					rs.getString("address"),
+					rs.getString("aboutMe")
+				);
+			}
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return memberVo;
+	}
+	
+	/***
 	 * @param id 비밀번호 변경할 아이디 값
 	 * @param password 변경할 비밀번호 
 	 * @return 결과 반환 true : 비밀번호 변경성공 false : 변경 실패 
@@ -194,6 +224,45 @@ public class MemberDAO extends BaseDao<MemberVo> {
 				e.printStackTrace();
 			}
 		return isResult;
+	}
+	
+	/***
+	 * @FIXME 이게 맞는건지 모르곘다. 리펙토링 기간에 고민 다시 해보자.
+	 * cno를 기준으로 패스워드 뺴고 데이터 업데이트
+	 * @param cno 회원 번호
+	 * @param cstNm 이름 
+	 * @param gender 성별 
+	 * @param email 이메일 
+	 * @param address 주소 
+	 * @param aboutMe 자기소개 
+	 * @return 성공시 : true 실패시 : false
+	 */
+	public boolean noPasswordDataUpdate(String cno, String cstNm, String gender, String email, String address, String aboutMe) {
+		boolean isResult = false;
+		try {
+			String query = "UPDATE " + TABLE_NAME_MEMBER + " " +
+					"SET "+ 
+					"cstNm = " + "'" + cstNm + "', " +
+					"gender = " + "'" + gender + "', " +
+					"email = " + "'" + email + "', " +
+					"address = " + "'" + address + "', " +
+					"aboutMe = " + "'" + aboutMe + "' " +
+					"WHERE cno = " + cno;
+			System.out.println("query : "+ query);
+			int result = dataBaseUtils.updateQuery(query);
+			System.out.println("noPasswordDataUpdate result : "+ result);
+			if(result > 0) {
+				isResult = true;
+			}else {
+				isResult = false;
+			}
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return isResult;
+		
 	}
 	/***
 	 * 회원의 cno로 데이터 베이스에서 계정을 삭제.

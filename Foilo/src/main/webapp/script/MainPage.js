@@ -3,11 +3,19 @@
 const URL_LOCAL_HOST = "http://localhost:8080"
 const URL_FOLIO_MAIN_TO_LOGIN = URL_LOCAL_HOST + "/Foilo/MoveToLoginAction.do" //로그인으로 이동.
 const URL_FOLIO_LOGOUT = URL_LOCAL_HOST + "/Foilo/LogoutAction.do" //로그아웃 액션 
-const URL_FOLIT_DELETE_ACCOUNT = URL_LOCAL_HOST + "/Foilo/DeleteAccountAction.do" //회원 탈퇴
+const URL_FOLIO_DELETE_ACCOUNT = URL_LOCAL_HOST + "/Foilo/DeleteAccountAction.do" //회원 탈퇴
+const URL_FOLIO_SETTING_MODIFY = URL_LOCAL_HOST + "/Foilo/SettingModifyAction.do" //회원 정보 수정.
 const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
+const ERROR_VALIDATION_NAME_EMPTY_MSG = "이름에 빈값이 들어갈 수 없습니다."
+const ERROR_VALIDATION_EMAIL_EMPTY_MSG = "email에 빈값이 들어갈 수 없습니다."
+const ERROR_VALIDATION_EMAIL_FORMAT_NOT_MATCH_MSG = "이메일에 형식이 올바르지 않습니다."
+const ERROR_VALIDATION_ADDRESS_EMPTY_MSG = "주소에 빈값이 들어갈 수 없습니다."
 
 const contentDiv = document.getElementById("boardContainer")
-
+//설정에서는 최초에 정상적인 값이 들어가 있으므로 초기값은 true 임 
+let isSettingNameChecked = true //이름 벨류 데이션 체킹
+let isSettingEmailChecked = true //이메일 벨류데이션 체킹 
+let isSettingAddressChecked = true //주소 벨류데이션 체킹 
 /**글쓰기로 컨텐츠 전환 */
 const onLoadInsertBoard = () => {
 	/* 글쓰기 리스트로 페이지 전환시에 글쓰기 버튼을 감추거나 다른걸로 변경 한다.
@@ -37,23 +45,121 @@ const onLoadSetting = (info) => {
 	const male =(memberInfoJSON.gender === "남")? 'checked' : '';
 	const fmale =(memberInfoJSON.gender === "여")? 'checked' : '';
 	/*세팅 화면*/
-	 contentDiv.innerHTML = "<div id='settingRootContainer'>"+
-	 							"<p class='nomalTitleStyle' id='settingTitle'>설정화면</p><br>"+
-	 							"<p class='subTitleStyle'>이름</p>"+
-	 							`<input class='settingTextInput' id='modifyName' type='text' value=${ memberInfoJSON['cstNm'] }><br>`+
- 								"<p class='subTitleStyle'>성별</p>"+
+	 contentDiv.innerHTML = `<div id='settingRootContainer'>`+
+	 							`<p class='nomalTitleStyle' id='settingTitle'>설정화면</p><br>`+
+	 							`<p class='subTitleStyle'>이름</p>`+
+	 							`<input class='settingTextInput' id='modifyName' type='text' value=${memberInfoJSON['cstNm']} onkeyup="settingNameCheckListener()">`+
+	 							`<p class='subTitleStyle' id='validationNameText' style="color: red; margin-left: 5px;" hidden>이름입력 확인 텍스트</p>` +
+ 								`<p class='subTitleStyle'>성별</p>`+
  								"<label><input id='selectGender' name='gender' type='radio' value='남' " + male + ">남</label>"+
 	                    		"<label><input id='selectGender' name='gender' type='radio' value='여' " + fmale + ">여</label><br>"+
-								"<p class='subTitleStyle'>이메일</p>"+
-								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfoJSON['email']}'><br>`+
+								`<p class='subTitleStyle'>이메일</p>`+
+								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfoJSON['email']}' onkeyup="settingEmailCheckListener()"><br>`+
+								`<p class='subTitleStyle' id='validationEmailText' style="color: red; margin-left: 5px;" hidden>이메일 입력 확인 텍스트</p>` +
 								`<p class='subTitleStyle'>주소</p>`+
-								`<input class='settingTextInput' id='modifyAddress' type='text' value='${memberInfoJSON['address']}'><br>`+
+								`<input class='settingTextInput' id='modifyAddress' type='text' value='${memberInfoJSON['address']}' onkeyup="settingAddrCheckListener()"><br>`+
+								`<p class='subTitleStyle' id='validationAddressText' style="color: red; margin-left: 5px;" hidden>주소확인 텍스트</p>` +
 								`<p class='subTitleStyle'>자기소개</p>`+
-	 							`<textarea class='settingTextInput'>${ memberInfoJSON['aboutMe'] })}</textarea><br>`+
+	 							`<textarea class='settingTextInput' id='modifyAboutMe'>${memberInfoJSON['aboutMe']}</textarea><br>` +
 	 							`<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount(${info})'>회원 탈퇴</button>`+
 	 							`<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy("${memberInfoJSON['id']}")'>비밀번호 변경하기</button>` +
-	 							"<button class='settingNomalButton' id='modifyOkay' onclick='modfiyOkay()'>수정 완료</button>"+
+	 							`<button class='settingNomalButton' id='modifyOkay' onclick='settingModfiyOkay(${memberInfoJSON['cno']})'>수정 완료</button>`+
 	 						"</div>"
+}
+
+//설정에서 세팅중 네임에 대한 벨류 데이션 체크리스너
+const settingNameCheckListener = () => {
+	const nameInputVal = document.getElementById("modifyName").value.trim()
+	const nameInputValicationText = document.getElementById("validationNameText")
+	
+	if(nameInputVal === "" || nameInputVal === null) {
+		showInputTypeElement(nameInputValicationText,ERROR_VALIDATION_NAME_EMPTY_MSG)
+		isSettingNameChecked = false
+	}else {
+		hideInputTypeElement(nameInputValicationText);
+		isSettingNameChecked = true
+	}
+}
+
+
+
+//설정에서 세팅중 네임에 대한 벨류 데이션 체크리스너
+const settingEmailCheckListener = () => {
+	const emailInputVal = document.getElementById("modifyEmail").value.trim()
+	const emailnputValicationText = document.getElementById("validationEmailText")
+	if(emailInputVal === "" || emailInputVal === null) {
+		showInputTypeElement(emailnputValicationText,ERROR_VALIDATION_EMAIL_EMPTY_MSG)
+		isSettingEmailChecked = false
+	}else if(!emailValudation(emailInputVal)) {
+		showInputTypeElement(emailnputValicationText,ERROR_VALIDATION_EMAIL_FORMAT_NOT_MATCH_MSG)
+		isSettingEmailChecked = false
+	}else {
+		hideInputTypeElement(emailnputValicationText)
+		isSettingEmailChecked = true
+	}
+}
+
+//설정에서 세팅중 네임에 대한 벨류 데이션 체크리스너
+const settingAddrCheckListener = () => {
+	const addressInputVal = document.getElementById("modifyAddress").value.trim()
+	const addressnputValicationText = document.getElementById("validationAddressText")
+	if(addressInputVal === "" || addressInputVal === null) {
+		showInputTypeElement(addressnputValicationText,ERROR_VALIDATION_ADDRESS_EMPTY_MSG)
+		isSettingAddressChecked = false
+	}else {
+		hideInputTypeElement(addressnputValicationText)
+		isSettingAddressChecked = true
+	}
+}
+
+const settingModfiyOkay = (cno) => {
+	const nameInput = document.getElementById("modifyName")
+	const emailInput = document.getElementById("modifyEmail")
+	const addressInput = document.getElementById("modifyAddress")
+	const aboutMeInput = document.getElementById("modifyAboutMe")
+	const gender = document.querySelector(`input[name="gender"]:checked`).value
+	
+	console.log(`name : ${nameInput.value} gender : ${gender}, email : ${emailInput.value}, addressInput : ${addressInput.value},aboutMe : ${aboutMeInput.value}`)
+	if(!isSettingNameChecked) {
+		alert("이름을 잘 입력해주세요.")
+		nameInput.focus()
+	}else if(!isSettingEmailChecked) {
+		alert("이메일을 잘 입력해주세요.")
+		emailInput.focus()
+	}else if(!isSettingAddressChecked) {
+		alert("주소를 잘 입력해주세요.")
+		addressInput.focus()
+	}else {
+		if(confirm("수정을 완료 하시겠습니까?")) {
+			fetch(URL_FOLIO_SETTING_MODIFY,{
+				method : 'POST',
+				headers :{
+					"ContentType" : "application/json"
+				},
+				body : JSON.stringify({
+					"cno" : cno,
+					"cstNm" : nameInput.value,
+					"gender" : gender,
+					"email" : emailInput.value,
+					"address" : addressInput.value,
+					"aboutMe" : aboutMeInput.value
+				})
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data.isModifyOkay) {
+					alert("정보수정이 성공적으로 변경되었습니다.")
+					pageRefresh() //수정된 정보로 페이지 리로드
+					//TODO HSCHOE 페이지 로드후 스택으로 전에 화면으로pop 시키도록 구현하기. 
+				}else {
+					alert("서버오류로 정보 수정이 실패하였습니다.")
+				}
+			})
+			.catch(error => console.error("에러 : ", error))
+		} else {
+			//아무것도 안함
+		}
+	}
 }
 
 const passWordModfiy = (id) => {
@@ -68,7 +174,7 @@ const deleteAccount = (info) => {
 	if(confirm("회원을 탈퇴하시겠습니까?")) {
 		console.log(info)
 		//회원탈퇴에 JSON 파라메터 보냄
-		fetch(URL_FOLIT_DELETE_ACCOUNT, {
+		fetch(URL_FOLIO_DELETE_ACCOUNT, {
 			method: 'POST',
 			headers: {
 				"Content-Type" : "application/json"
@@ -93,14 +199,7 @@ const deleteAccount = (info) => {
 	}
 }
 
-const modfiyOkay = () => {
-	if(confirm("수정을 완료 하시겠습니까?")) {
-		
-	} else {
-		
-	}
-}
-
+//로그인창 이동
 const goLoginPage = () => {
 	location.href = URL_FOLIO_MAIN_TO_LOGIN
 }
@@ -134,12 +233,12 @@ window.addEventListener('resize',() => {
 })
 
 //DOM이 로드 완료될시에 
-document.addEventListener('DOMContentLoaded', ()=> {
+document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded")
     updateCenterPosition()
 })
 
-const onLogout = ()=> {
+const onLogout = () => {
 	fetch(URL_FOLIO_LOGOUT)
 	.then(response => response.json())
 	.then(data => { 
@@ -151,3 +250,57 @@ const onLogout = ()=> {
 	 })
 	.catch(error => console.error("에러 :", error))
 }
+
+
+/**정규식을 활용한 이메일 검증 */
+function emailValudation(emailString) {
+    var regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regExp.test(emailString)
+}
+
+/*****************************************************************************************요놈들은 나중에 공통으로 뺄것들 ******************************************************************/
+/**
+ * 특정 요소 보이게
+ */
+ 
+ 
+//텍스트 요소 보이면서 메세지 출력
+const showInputTypeElement = (element, msg) => {
+    element.innerText = msg
+    element.style.color = 'red'
+    elementShow(element)
+} 
+
+//텍스트 요소 숨기기
+const hideInputTypeElement = (element) => {
+    elementHide(element)
+} 
+
+const pageRefresh = () => {
+	history.go(0);
+}
+ 
+function elementShow(elemtnt) {
+    elemtnt.hidden = false
+}
+
+function elementShowAll(...elementList) {
+    element.array.forEach(element => {
+        element.hidden = false
+    });
+}
+
+/**
+ * 특정요소 안보이도록
+ */
+function elementHide(element) {
+    element.hidden = true
+}
+
+function elementHideAll(...elementList) {
+    element.array.forEach(element => {
+        element.hidden = true
+    });
+}
+
+

@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
 })
 
 const validationAll = ()=> {
-	
 	const newPasswordVal = document.getElementById("newPassword").value;
 	const currentPasswordVal = document.getElementById("currentPasswordInput").value
 	const id = new URLSearchParams(window.location.search).get("userId") //내부에서 계정 조회해서 패스워드를 검사하기 위한 용도.
