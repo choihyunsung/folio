@@ -117,8 +117,15 @@ const insertBoard = (cno)=> {
 		content.focus()
 	}else {
 		fetch(URL_FOLIO_INSERT_BOARD + queryString)
-		.then(response => response.text)
-		.then(data =>console.log(data))
+		.then(response => response.json())
+		.then(data =>{
+			if(data.isInsertBoard) {
+				alert("성공적으로 게시되었습니다.")
+				onLoadBoardList()				
+			} else {
+				alert("서버에서 게시글 작성이 실패되었습니다.")
+			}
+		})
 		.catch(error=>console.error("에러",error))
 	}
 }

@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
+
 import kr.block.common.action.base.BaseDAOAction;
 import kr.block.common.object.Pair;
 import kr.block.common.type.ResponseMethodType;
@@ -29,8 +31,11 @@ public class InsertBoardAction extends BaseDAOAction<BoardVo, BoardDAO> {
 				String title = req.getParameter("title");
 				String content = req.getParameter("content");
 				dao.insert(new BoardVo(0, cno, null, title, content));
+				JSONObject stateObject = new JSONObject();
+				stateObject.put("isInsertBoard", true); //로그인 여부 
 				resp.setCharacterEncoding("UTF-8");
 				resp.setContentType("text/plain"); // 미디어 유형 설정
+				resp.getWriter().write(stateObject.toJSONString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
