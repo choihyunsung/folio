@@ -12,7 +12,7 @@
 }
 
 
-#settingRootContainer {
+.main-content-container-style {
     width: 70%;
     height: min-content;
     margin: auto;
