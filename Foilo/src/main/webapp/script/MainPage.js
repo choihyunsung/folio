@@ -6,6 +6,8 @@ const URL_FOLIO_LOGOUT = URL_LOCAL_HOST + "/Foilo/LogoutAction.do" //로그아�
 const URL_FOLIO_DELETE_ACCOUNT = URL_LOCAL_HOST + "/Foilo/DeleteAccountAction.do" //회원 탈퇴
 const URL_FOLIO_SETTING_MODIFY = URL_LOCAL_HOST + "/Foilo/SettingModifyAction.do" //회원 정보 수정.
 const URL_FOLIO_INSERT_BOARD =  URL_LOCAL_HOST + "/Foilo/InsertBoardAction.do"//게시글 삽입
+const URL_FOLIO_LOOK_UP_BOARD = URL_LOCAL_HOST + "/Foilo/LookUpBoardAction.do"//게시글 조회
+const URL_FOLIO_GET_BOARD = URL_LOCAL_HOST + "/Foilo/GetBoardAction.do" //게시글 보기 
 const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
 
 const ERROR_VALIDATION_NAME_EMPTY_MSG = "이름에 빈값이 들어갈 수 없습니다."
@@ -24,6 +26,7 @@ let isSettingNameChecked = true //이름 벨류 데이션 체킹
 let isSettingEmailChecked = true //이메일 벨류데이션 체킹 
 let isSettingAddressChecked = true //주소 벨류데이션 체킹 
 /**글쓰기로 컨텐츠 전환 */
+
 const onLoadInsertBoard = () => {
 	/* 글쓰기 리스트로 페이지 전환시에 글쓰기 버튼을 감추거나 다른걸로 변경 한다.
 	글쓰기 폼을 innerHtml로 갈아치우고 처리한다.
@@ -53,23 +56,66 @@ const moveToPrevPage = () =>{
 
 /**게시글 리스트로 컨텐츠 전환 */
 const onLoadBoardList = () => {
-	/*
-		위에 onLoadBard와 반대로 작업하면됨 
-	 */
-	contentDiv.innerHTML = `<p>게시글</p>`
-	elementShow(writingBtn)
-	elementHide(writingSuccessBtn)
-	elementHide(settingModifyBtn)
-	elementHide(returnBoardButton)
+	
+	fetch(URL_FOLIO_LOOK_UP_BOARD)
+	.then(response => response.json())
+	.then(list => {
+		if(list.length > 0) {
+			let htmlString =
+			`<div class='main-content-container-style' id='listRootContainer'>`+ 
+			`<p>게시글</p>`+
+			`<table class='board-list-style' style="width:100%;">` +
+				`<tr>`+
+					`<th class='board-colunm-style' style="width:20%;">글번호</th>`+
+					`<th class='board-colunm-style' style="width:50%;">제목</th>`+
+					`<th class='board-colunm-style' style="width:30%;">작성일</th>`+
+				`</tr>`
+			for(var i = 0; i < list.length; i++) {
+				htmlString += 
+				`<tr class='board-row-style'>`+
+					`<td class='board-list-td'>${ list[i].no }</td>`+	
+					`<td class='board-list-td' style="cursor: pointer;" onclick="onLoadPrintBoard(${ list[i].no })">${ list[i].title }</td>`+	
+					`<td class='board-list-td'>${ list[i].date }</td>`+	
+				`</tr>`	
+			}
+			htmlString+=
+			`</div>` + 
+			`</table>`
+			contentDiv.innerHTML = htmlString
+		} else {
+			onNotBoardList() 
+		}
+		elementShow(writingBtn)
+		elementHide(writingSuccessBtn)
+		elementHide(settingModifyBtn)
+		elementHide(returnBoardButton)
+	})
+	.catch(error => console.error("에러",error))
+}
+
+/* 게시글이 아무것도 없을때 호출 */
+const onNotBoardList = () => {
+	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
+	 						`<p>게시글이 단하나라도 존재하지 않습니다.:(</p>`+
+	 						`</div>`
 }
 
 /** 게시글 보기 페이지로 이동 */
-const onLoadPrintBoard = () => {
-	shelementShow(returnBoardButton)
-	/*
-		위에 onLoadBard와 반대로 작업하면됨 
-	 */
-	contentDiv.innerHTML = `<p>글보기</p>`
+const onLoadPrintBoard = (boardNo) => {	
+		const queryString = `?no=${boardNo}`
+		fetch(URL_FOLIO_GET_BOARD + queryString)
+		.then(response => response.json())
+		.then(data =>{
+			contentDiv.innerHTML = `<p>글보기</p>`
+			contentDiv.innerHTML +=`title : ${data.title},content :${data.content}` 
+			elementShow(returnBoardButton)
+			elementHide(writingSuccessBtn)
+			elementHide(settingModifyBtn)
+			elementHide(writingBtn)
+		})
+		.catch(error=>console.error("에러",error))
+	
+	
 }
 /*세팅 화면*/
 const onLoadSetting = (info) => {
@@ -79,21 +125,21 @@ const onLoadSetting = (info) => {
 	contentDiv.innerHTML = `<div id='settingRootContainer' class='main-content-container-style'>`+
 	 							`<p class='nomalTitleStyle' id='settingTitle'>설정화면</p><br>`+
 	 							`<p class='subTitleStyle'>이름</p>`+
-	 							`<input class='settingTextInput' id='modifyName' type='text' value=${memberInfoJSON['cstNm']} onkeyup="settingNameCheckListener()">`+
+	 							`<input class='settingTextInput' id='modifyName' type='text' value=${ memberInfoJSON['cstNm'] } onkeyup="settingNameCheckListener()">`+
 	 							`<p class='subTitleStyle' id='validationNameText' style="color: red; margin-left: 5px;" hidden>이름입력 확인 텍스트</p>` +
  								`<p class='subTitleStyle'>성별</p>`+
  								"<label><input id='selectGender' name='gender' type='radio' value='남' " + male + ">남</label>"+
 	                    		"<label><input id='selectGender' name='gender' type='radio' value='여' " + fmale + ">여</label><br>"+
 								`<p class='subTitleStyle'>이메일</p>`+
-								`<input class='settingTextInput' id='modifyEmail' type='email' value='${memberInfoJSON['email']}' onkeyup="settingEmailCheckListener()"><br>`+
+								`<input class='settingTextInput' id='modifyEmail' type='email' value='${ memberInfoJSON['email'] }' onkeyup="settingEmailCheckListener()"><br>`+
 								`<p class='subTitleStyle' id='validationEmailText' style="color: red; margin-left: 5px;" hidden>이메일 입력 확인 텍스트</p>` +
 								`<p class='subTitleStyle'>주소</p>`+
-								`<input class='settingTextInput' id='modifyAddress' type='text' value='${memberInfoJSON['address']}' onkeyup="settingAddrCheckListener()"><br>`+
+								`<input class='settingTextInput' id='modifyAddress' type='text' value='${ memberInfoJSON['address'] }' onkeyup="settingAddrCheckListener()"><br>`+
 								`<p class='subTitleStyle' id='validationAddressText' style="color: red; margin-left: 5px;" hidden>주소확인 텍스트</p>` +
 								`<p class='subTitleStyle'>자기소개</p>`+
-	 							`<textarea class='settingTextInput' id='modifyAboutMe'>${memberInfoJSON['aboutMe']}</textarea><br>` +
-	 							`<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount(${info})'>회원 탈퇴</button>`+
-	 							`<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy("${memberInfoJSON['id']}")'>비밀번호 변경하기</button>` +
+	 							`<textarea class='settingTextInput' id='modifyAboutMe'>${ memberInfoJSON['aboutMe'] }</textarea><br>` +
+	 							`<button class='settingNomalButton' id='delAccountButton' onclick='deleteAccount(${ info })'>회원 탈퇴</button>`+
+	 							`<button class='settingNomalButton' id='modifyPassWord' onclick='passWordModfiy("${ memberInfoJSON['id'] }")'>비밀번호 변경하기</button>` +
  								`<button class='nomalButtonStyle' style='float:right' onclick='moveToPrevPage()'>이전화면</button>` +
 	 						"</div>"
 	elementShow(settingModifyBtn)
@@ -102,7 +148,7 @@ const onLoadSetting = (info) => {
 	elementHide(returnBoardButton)
 }
 
-const insertBoard = (cno)=> {
+const insertBoard = (cno) => {
 	const title = document.getElementById("insert-board-title")
 	const titleVal = title.value.trim()
 	const content = document.getElementById("insert-board-content")

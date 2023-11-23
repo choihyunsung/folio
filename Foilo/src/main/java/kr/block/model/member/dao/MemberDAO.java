@@ -41,10 +41,10 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	}
 
 	@Override
-	public List<MemberVo> selectAll(String tableName) {
+	public List<MemberVo> selectAll() {
 			List<MemberVo> list = new ArrayList<MemberVo>();
 		try {
-			String query = "SELECT * FROM " + tableName;
+			String query = "SELECT * FROM " + TABLE_NAME_MEMBER;
 			System.out.println("query : "+ query);
 			ResultSet rs = dataBaseUtils.executeQuery(query);
 		

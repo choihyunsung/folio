@@ -74,3 +74,23 @@
     border-radius: 5px;
 	width: 100%;
 }
+
+.board-list-td {
+	text-align: center;
+}
+
+.board-list-style {
+	border-collapse: collapse;
+	border-radius: 5px;
+}
+
+.board-row-style{
+	border-bottom: 1px solid black;
+	border-radius: 5px;
+    height: 35px;
+}
+
+.board-colunm-style {
+	   box-shadow: 1px 1px 1px 1px gray;
+	   border-radius: 5px;
+}
