@@ -58,9 +58,27 @@ public class BoardDAO extends BaseDao<BoardVo> {
 		return list;
 	}
 	
+	/***
+	 * 
+	 * @param no 게시글 번호 
+	 * @return 게시판 삭제 성공시 : true 삭제 실패시에 : false
+	 */
+	public boolean deleteByNo(int no) {
+		boolean result = false;
+		String query = "DELETE FROM " + TABLE_NAME_BOARD + " WHERE no="+no;
+		try {
+			int rs = dataBaseUtils.updateQuery(query);
+			result = (rs > 0); 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	@Override
 	public void delete(BoardVo vo) {
-		// TODO Auto-generated method stub
+	
 		
 	}
 

@@ -8,6 +8,7 @@ const URL_FOLIO_SETTING_MODIFY = URL_LOCAL_HOST + "/Foilo/SettingModifyAction.do
 const URL_FOLIO_INSERT_BOARD =  URL_LOCAL_HOST + "/Foilo/InsertBoardAction.do"//게시글 삽입
 const URL_FOLIO_LOOK_UP_BOARD = URL_LOCAL_HOST + "/Foilo/LookUpBoardAction.do"//게시글 조회
 const URL_FOLIO_GET_BOARD = URL_LOCAL_HOST + "/Foilo/GetBoardAction.do" //게시글 보기 
+const URL_FOLIO_DELETE_BOARD = URL_LOCAL_HOST + "/Foilo/DeleteBoardAction.do" //게시글 삭제  
 const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
 
 const ERROR_VALIDATION_NAME_EMPTY_MSG = "이름에 빈값이 들어갈 수 없습니다."
@@ -126,8 +127,8 @@ const onLoadPrintBoard = (boardNo) => {
 					`</tr>` +
 					`<tr>` +
 						`<td colspan='2'>`+
-							`<button class='nomalButtonStyle' onclick="boardModify()">수정</button>` +
-							`<button class='nomalButtonStyle' onclick="boardDelete()">삭제</button>` +
+							`<button class='nomalButtonStyle' onclick="boardModify(${ data.no })">수정</button>` +
+							`<button class='nomalButtonStyle' onclick="boardDelete(${ data.no })">삭제</button>` +
 						`</td>`+
 					`</tr>` +
 				`</table>` + 
@@ -202,8 +203,23 @@ const insertBoard = (cno) => {
 	}
 }
 
-const boardDelete = () => {
-	alert('게시글 삭제') //일단 자기 자신의 게시글인지 확인하는 작업 필요
+const boardDelete = (boardNo) => {
+	if(confirm('게시글을 삭제 하시겠습니까?')) {
+		fetch(URL_FOLIO_DELETE_BOARD+`?no=${boardNo}`)
+		.then(response => response.json())
+		.then(data => {
+			console.log(data)
+			if(data.isDeleteBoard) {
+				onLoadBoardList()
+			}else {
+				
+			}
+			
+		})
+		.catch(error => console.error("에러",error))		
+	} else {
+		//아무것도 안함 
+	}
 }
 
 
