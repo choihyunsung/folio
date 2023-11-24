@@ -9,6 +9,7 @@ const URL_FOLIO_INSERT_BOARD =  URL_LOCAL_HOST + "/Foilo/InsertBoardAction.do"//
 const URL_FOLIO_LOOK_UP_BOARD = URL_LOCAL_HOST + "/Foilo/LookUpBoardAction.do"//게시글 조회
 const URL_FOLIO_GET_BOARD = URL_LOCAL_HOST + "/Foilo/GetBoardAction.do" //게시글 보기 
 const URL_FOLIO_DELETE_BOARD = URL_LOCAL_HOST + "/Foilo/DeleteBoardAction.do" //게시글 삭제  
+const URL_FOLIO_MODIFY_BOARD = URL_LOCAL_HOST + "/Foilo/ModifyBoardAction.do" //게시글 수정  
 const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
 
 const ERROR_VALIDATION_NAME_EMPTY_MSG = "이름에 빈값이 들어갈 수 없습니다."
@@ -19,19 +20,17 @@ const ERROR_VALIDATION_ADDRESS_EMPTY_MSG = "주소에 빈값이 들어갈 수 �
 const contentDiv = document.getElementById("boardContainer")
 const writingBtn = document.getElementById("writingButton") //글쓰기 버튼 
 const writingSuccessBtn = document.getElementById("writingSuccessButton") //글작성완료 버튼 
-const settingModifyBtn = document.getElementById("SettingModifyButton") //세팅 수정 완료 버튼 
+const settingModifyBtn = document.getElementById("settingModifyButton") //세팅 수정 완료 버튼 
 const returnBoardButton = document.getElementById("returnBoardButton") //게시글 보기에서 게시판으로 돌아갈때 사용
+const boardModifyButton = document.getElementById("boardModifyButton") // 게시글 수정 버튼
 
 //설정에서는 최초에 정상적인 값이 들어가 있으므로 초기값은 true 임 
 let isSettingNameChecked = true //이름 벨류 데이션 체킹
 let isSettingEmailChecked = true //이메일 벨류데이션 체킹 
 let isSettingAddressChecked = true //주소 벨류데이션 체킹 
-/**글쓰기로 컨텐츠 전환 */
 
+/**글쓰기로 컨텐츠 전환 */
 const onLoadInsertBoard = () => {
-	/* 글쓰기 리스트로 페이지 전환시에 글쓰기 버튼을 감추거나 다른걸로 변경 한다.
-	글쓰기 폼을 innerHtml로 갈아치우고 처리한다.
-	데이터는 json으로 BoardVo으로 동일하게 작업한다.*/	
  	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
 	 							`<p class='nomalTitleStyle' id='settingTitle'>글쓰기 화면</p>` +
 	 							`<p class='subTitleStyle'>제목</p>` +
@@ -46,6 +45,7 @@ const onLoadInsertBoard = () => {
 	elementHide(writingBtn)
 	elementHide(settingModifyBtn)
 	elementHide(returnBoardButton)
+	elementHide(boardModifyButton)
 }
 
 /** 이전페이지 이동시 처리될것. */
@@ -90,8 +90,9 @@ const onLoadBoardList = () => {
 		elementHide(writingSuccessBtn)
 		elementHide(settingModifyBtn)
 		elementHide(returnBoardButton)
+		elementHide(boardModifyButton)
 	})
-	.catch(error => console.error("에러",error))
+	.catch(error => console.error("에러", error))
 }
 
 /* 게시글이 아무것도 없을때 호출 */
@@ -99,6 +100,36 @@ const onNotBoardList = () => {
 	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
 	 						`<p>게시글이 단하나라도 존재하지 않습니다.:(</p>`+
 	 						`</div>`
+}
+
+/* 수정 화면 보이기 */
+const onLoadModifyBoard = (boardInfo) => {
+	const content = boardInfo.content.replaceAll("<br>", "\r\n");
+ 	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
+	 							`<p class='nomalTitleStyle' id='settingTitle'>글수정 화면</p>` +
+	 							`<p class='subTitleStyle'>제목</p>` +
+	 							`<input class='nomalInputStyle' id='modify-board-title' type='text' style='width:99%' placeholder='제목 입력 하기' value='${ boardInfo.title }'><br>` +
+	 							`<p class='subTitleStyle'>내용</p>` +
+	 							`<textarea class='nomalTextArea' id='modify-board-content' style='width:100%; height: 200px' placeholder="내용을 입력하세요">${ content }</textarea><br>` +
+	 							`<div>` +
+	 							`<button class='nomalButtonStyle' style='float:right' onclick='moveToPrevPage()'>이전화면</button>` +
+	 							`</div>` +
+	 						`</div>`
+	elementShow(boardModifyButton)
+	elementHide(writingBtn)
+	elementHide(settingModifyBtn)
+	elementHide(returnBoardButton)
+	elementHide(writingSuccessBtn)
+	
+	const modifyClickListener = () => {
+		const modifyTitleVal = document.getElementById("modify-board-title").value
+		const modifyContentVal = document.getElementById("modify-board-content").value
+		boardInfo.title = modifyTitleVal
+		boardInfo.content = modifyContentVal
+ 		modifyBoard(boardInfo) //서버랑 통신해서 데이터 수정하기 
+ 		boardModifyButton.removeEventListener("click", modifyClickListener)
+	}
+	boardModifyButton.addEventListener("click", modifyClickListener)
 }
 
 /** 게시글 보기 페이지로 이동 */
@@ -127,20 +158,20 @@ const onLoadPrintBoard = (boardNo) => {
 					`</tr>` +
 					`<tr>` +
 						`<td colspan='2'>`+
-							`<button class='nomalButtonStyle' onclick="boardModify(${ data.no })">수정</button>` +
+							`<button class='nomalButtonStyle' onclick='boardModify(${ JSON.stringify(data) })'>수정</button>` +
 							`<button class='nomalButtonStyle' onclick="boardDelete(${ data.no })">삭제</button>` +
 						`</td>`+
 					`</tr>` +
 				`</table>` + 
-				  
 			`</div>`
 			
 			elementShow(returnBoardButton)
 			elementHide(writingSuccessBtn)
 			elementHide(settingModifyBtn)
 			elementHide(writingBtn)
+			elementHide(boardModifyButton)
 		})
-		.catch(error=>console.error("에러",error))
+		.catch(error => console.error("에러", error))
 	
 	
 }
@@ -173,8 +204,10 @@ const onLoadSetting = (info) => {
 	elementHide(writingBtn)
 	elementHide(writingSuccessBtn)
 	elementHide(returnBoardButton)
+	elementHide(boardModifyButton)
 }
 
+/* 실제로 게시글 서버에 저장  */
 const insertBoard = (cno) => {
 	const title = document.getElementById("insert-board-title")
 	const titleVal = title.value.trim()
@@ -202,13 +235,12 @@ const insertBoard = (cno) => {
 		.catch(error=>console.error("에러",error))
 	}
 }
-
+//실제로 서버에서 해당 게시글 제거
 const boardDelete = (boardNo) => {
 	if(confirm('게시글을 삭제 하시겠습니까?')) {
 		fetch(URL_FOLIO_DELETE_BOARD+`?no=${boardNo}`)
 		.then(response => response.json())
 		.then(data => {
-			console.log(data)
 			if(data.isDeleteBoard) {
 				onLoadBoardList()
 			}else {
@@ -223,8 +255,36 @@ const boardDelete = (boardNo) => {
 }
 
 
-const boardModify = () => {
-	alert('게시글 수정') //일단 자기 자신의 게시글인지 확인하는 작업 필요
+const boardModify = (boardInfo) => {
+	console.log(boardInfo)
+	if(confirm('게시글을 수정하시겠습니까?')) {
+		onLoadModifyBoard(boardInfo)
+	} else {
+		//아무것도 안함 
+	}
+}
+
+/**실질적으로 데이터를 수정하는 메소드  */
+const modifyBoard = (boardInfo) => {
+	console.log(boardInfo)
+	fetch(URL_FOLIO_MODIFY_BOARD,{
+		method : "POST",
+		headers:{
+			"Content-type":"applicaiton-json"
+		},
+		body: JSON.stringify(boardInfo)
+	})
+	.then(response => response.json())
+	.then(data=> {
+		
+		if(data.isModifyBoard) {
+			alert("성공적으로 게시글을 수정하였습니다.")
+			onLoadBoardList()
+		} else {
+			alert("서버에서 수정을 실패하였습니다.")
+		}
+	})
+	.catch(error => console.error("에러",error))
 }
 
 //설정에서 세팅중 네임에 대한 벨류 데이션 체크리스너

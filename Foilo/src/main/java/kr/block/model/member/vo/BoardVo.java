@@ -11,7 +11,7 @@ public class BoardVo extends BaseVo{
 	private int cno; //작성자 회원번호 (fk)
 	private Date date; //작성일 
 	private String title; //제목 
-	private String Content; //내용
+	private String content; //내용
 	
 	public BoardVo(int no, int cno, Date date, String title, String content) {
 		super();
@@ -19,6 +19,6 @@ public class BoardVo extends BaseVo{
 		this.cno = cno;
 		this.date = date;
 		this.title = title;
-		Content = content;
+		this.content = content;
 	}
 }

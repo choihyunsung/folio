@@ -83,9 +83,18 @@ public class BoardDAO extends BaseDao<BoardVo> {
 	}
 
 	@Override
-	public void update(BoardVo vo) {
-		// TODO Auto-generated method stub
-		
+	public boolean update(BoardVo vo) {
+		//날짜는 수정된 날짜로 덮여쓰임 
+		String query = "UPDATE " + TABLE_NAME_BOARD + " SET no = " + vo.getNo() +", cno = " + vo.getCno() + ", date = sysdate() , title = '" + vo.getTitle() + "', content = '" + vo.getContent()+"' WHERE no = " + vo.getNo();
+		boolean result = false;
+		try {
+			int rs = dataBaseUtils.updateQuery(query);
+			System.out.println("count = "+rs);
+			result = (rs > 0); 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }

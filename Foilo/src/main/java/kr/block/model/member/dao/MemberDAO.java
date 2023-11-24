@@ -280,7 +280,8 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	}
 
 	@Override
-	public void update(MemberVo vo) {
+	public boolean update(MemberVo vo) {
+		boolean result = false;
 		try {
 			String query = "UPDATE " +
 								TABLE_NAME_MEMBER + " " + 
@@ -295,9 +296,11 @@ public class MemberDAO extends BaseDao<MemberVo> {
 							   "aboutMe = " + "'" + vo.getAboutMe()+ "'" + " " +
 						   "WHERE " + 
 							   "cno = " +vo.getCno()+ ";";
-					dataBaseUtils.updateQuery(query);
+			int count =	dataBaseUtils.updateQuery(query);
+			result = (count > 0);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 }

@@ -1,5 +1,6 @@
 package kr.block.common.utils;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -9,6 +10,10 @@ import org.json.simple.parser.ParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 import kr.block.common.base.vo.BaseVo;
 
@@ -53,8 +58,11 @@ public class JsonUtils {
 	 * @return
 	 */
 	public static<VO extends BaseVo> VO getJsonToVO(String json, Class<VO> cls) {
-		Gson gson = new Gson();
-		return gson.fromJson(json.toString(),cls); 
+		Gson gson =  new GsonBuilder()
+		        .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (jsonType, typeOfT, context) -> new Date(jsonType.getAsJsonPrimitive().getAsLong()))
+		        .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))
+		        .create();
+		return gson.fromJson(json.toString(), cls); 
 	}
 	
 	/**
