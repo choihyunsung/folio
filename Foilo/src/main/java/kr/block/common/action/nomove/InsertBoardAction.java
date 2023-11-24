@@ -29,7 +29,7 @@ public class InsertBoardAction extends BaseDAOAction<BoardVo, BoardDAO> {
 				req.setCharacterEncoding("UTF-8");
 				int cno = Integer.valueOf(req.getParameter("cno"));
 				String title = req.getParameter("title");
-				String content = req.getParameter("content");
+				String content = req.getParameter("content").replace("\r\n", "<br>"); //개행을 넣기위함 
 				dao.insert(new BoardVo(0, cno, null, title, content));
 				JSONObject stateObject = new JSONObject();
 				stateObject.put("isInsertBoard", true); //로그인 여부 

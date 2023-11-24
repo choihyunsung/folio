@@ -105,9 +105,35 @@ const onLoadPrintBoard = (boardNo) => {
 		const queryString = `?no=${boardNo}`
 		fetch(URL_FOLIO_GET_BOARD + queryString)
 		.then(response => response.json())
-		.then(data =>{
-			contentDiv.innerHTML = `<p>글보기</p>`
-			contentDiv.innerHTML +=`title : ${data.title},content :${data.content}` 
+		.then(data => {
+		contentDiv.innerHTML = 
+			`<div class='main-content-container-style' id='readRootContainer'>` +
+				`<p class='board-read-title-style'>글보기</p>` +
+				`<table class='board-read-style'>` + 
+					`<tr>` +
+						`<td class='board-sub-style'>제목</td>` + 
+					`</tr>` +
+					`<tr>` +
+						`<td><pre class='read-board-title-style'>${data.title}</pre></td>` + 
+					`</tr>` +
+					`<tr>` +
+						`<td class='board-sub-style'>내용</td>` +
+					`</tr>` +
+					`<tr>` +
+						`<td colspan='2' style="height:190px;">` +
+							`<pre class='board-read-content-style'>${ data.content }</pre>` +
+						`</td>` +
+					`</tr>` +
+					`<tr>` +
+						`<td colspan='2'>`+
+							`<button class='nomalButtonStyle' onclick="boardModify()">수정</button>` +
+							`<button class='nomalButtonStyle' onclick="boardDelete()">삭제</button>` +
+						`</td>`+
+					`</tr>` +
+				`</table>` + 
+				  
+			`</div>`
+			
 			elementShow(returnBoardButton)
 			elementHide(writingSuccessBtn)
 			elementHide(settingModifyBtn)
@@ -153,7 +179,7 @@ const insertBoard = (cno) => {
 	const titleVal = title.value.trim()
 	const content = document.getElementById("insert-board-content")
 	const contentVal = content.value.trim()
-	const queryString = `?cno=${cno}&title=${titleVal}&content=${contentVal}`;
+	const queryString = `?cno=${cno}&title=${titleVal}&content=${contentVal.replace(/\n/g, "<br>")}`;
 	
 	if(titleVal === "" || titleVal === null) {
 		alert("제목은 빈값이 들어갈수 없습니다.")
@@ -174,6 +200,15 @@ const insertBoard = (cno) => {
 		})
 		.catch(error=>console.error("에러",error))
 	}
+}
+
+const boardDelete = () => {
+	alert('게시글 삭제') //일단 자기 자신의 게시글인지 확인하는 작업 필요
+}
+
+
+const boardModify = () => {
+	alert('게시글 수정') //일단 자기 자신의 게시글인지 확인하는 작업 필요
 }
 
 //설정에서 세팅중 네임에 대한 벨류 데이션 체크리스너
