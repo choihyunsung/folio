@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="rootContainerStyle" id="rootContainer"> <!--루트-->
-        <div class="loginRootContainer" id="loginRootContainer"> <!--로그인 루트-->
+        <div class="loginRootContainer" id="loginRootContainer"> 
             <div id="postItHeaderDiv"></div>
             <div id="loginInfoContainer">
                 <label class="nomalTitleStyle" id="idLabel">아이디 : '${sessionScope.memberInfo.cstNm }' 님 반갑습니다 :)</label>

@@ -1,5 +1,5 @@
 #rootContainer {
-    width: 30%;
+    width: 40%;
     height: max-content;
 }
 
@@ -13,7 +13,7 @@
 
 
 .main-content-container-style {
-    width: 70%;
+    width: 80%;
     height: min-content;
     margin: auto;
     padding: 20px;
@@ -30,7 +30,6 @@
 #loginInfoContainer {
     width: 80%;
     padding: 10px;
-    
 }
 
 .buttonStyle {
@@ -142,4 +141,14 @@
 .board-colunm-style {
 	   box-shadow: 1px 1px 1px 1px gray;
 	   border-radius: 5px;
+}
+
+#board-page-container {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.page-number-style {
+	margin-left: 5px;	
+	margin-right: 5px;	
 }

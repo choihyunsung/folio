@@ -15,6 +15,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
+import kr.block.common.base.dto.BaseDTO;
 import kr.block.common.base.vo.BaseVo;
 
 /***
@@ -52,12 +53,42 @@ public class JsonUtils {
 	
 	/***
 	 * 
+	 * @param dto JSONString 으로 변환할 vo
+	 * @return 해당 dto를 json String으로 변환.
+	 */
+	public static JSONObject getDTOJson(BaseDTO dto) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return getStringToJson(mapper.writeValueAsString(dto)); 
+		} catch (ParseException | JsonProcessingException e) {
+			e.printStackTrace();      
+			return null;
+		}       
+	}
+	
+	/***
+	 * 
 	 * @param <VO> 변경될 VO타
 	 * @param json 해당 VO
 	 * @param cls  변경될 VO 객체에 Class
 	 * @return
 	 */
 	public static<VO extends BaseVo> VO getJsonToVO(String json, Class<VO> cls) {
+		Gson gson =  new GsonBuilder()
+		        .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (jsonType, typeOfT, context) -> new Date(jsonType.getAsJsonPrimitive().getAsLong()))
+		        .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))
+		        .create();
+		return gson.fromJson(json.toString(), cls); 
+	}
+	
+	/***
+	 * 
+	 * @param <DTO> 변경될 DTO
+	 * @param json 해당 DTO
+	 * @param cls  변경될 DTO 객체에 Class
+	 * @return
+	 */
+	public static<DTO extends BaseDTO> DTO getJsonToDTO(String json, Class<DTO> cls) {
 		Gson gson =  new GsonBuilder()
 		        .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (jsonType, typeOfT, context) -> new Date(jsonType.getAsJsonPrimitive().getAsLong()))
 		        .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))

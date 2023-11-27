@@ -19,54 +19,6 @@ public class MemberDAO extends BaseDao<MemberVo> {
 	private final static String TABLE_NAME_MEMBER = "member"; 
 	private DataBaseUtils dataBaseUtils = DataBaseUtils.getInstance();
 	
-	@Override
-	public void insert(MemberVo vo) {
-		try {
-			String query = "INSERT INTO " + TABLE_NAME_MEMBER + " ("
-					+ "cno, id, password, cstNm, gender, email, address, aboutMe)"
-					+ " VALUES ("
-					+ 0 + ",'"
-					+ vo.getId() + "','" 
-					+ vo.getPassword() + "','" 
-					+ vo.getCstNm() + "','" 
-					+ vo.getGender() + "','" 
-					+ vo.getEmail() + "','" 
-					+ vo.getAddress() + "','" 
-					+ vo.getAboutMe() + 
-					"');";
-				dataBaseUtils.updateQuery(query);
-		} catch (SQLException e) {
-				e.printStackTrace();
-		}
-	}
-
-	@Override
-	public List<MemberVo> selectAll() {
-			List<MemberVo> list = new ArrayList<MemberVo>();
-		try {
-			String query = "SELECT * FROM " + TABLE_NAME_MEMBER;
-			System.out.println("query : "+ query);
-			ResultSet rs = dataBaseUtils.executeQuery(query);
-		
-			while(rs.next()) {
-				MemberVo vo = new MemberVo(
-						rs.getInt("cno"),
-						rs.getString("id"),
-						rs.getString("password"),
-						rs.getString("cstNm"),
-						rs.getString("gender"),
-						rs.getString("email"),
-						rs.getString("address"),
-						rs.getString("aboutMe")
-						);
-				list.add(vo);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-	
 	/***
 	 * 해당아이디가 있는지 여부 
 	 * @param id 아이디 
@@ -264,6 +216,55 @@ public class MemberDAO extends BaseDao<MemberVo> {
 		return isResult;
 		
 	}
+	
+	@Override
+	public void insert(MemberVo vo) {
+		try {
+			String query = "INSERT INTO " + TABLE_NAME_MEMBER + " ("
+					+ "cno, id, password, cstNm, gender, email, address, aboutMe)"
+					+ " VALUES ("
+					+ 0 + ",'"
+					+ vo.getId() + "','" 
+					+ vo.getPassword() + "','" 
+					+ vo.getCstNm() + "','" 
+					+ vo.getGender() + "','" 
+					+ vo.getEmail() + "','" 
+					+ vo.getAddress() + "','" 
+					+ vo.getAboutMe() + 
+					"');";
+				dataBaseUtils.updateQuery(query);
+		} catch (SQLException e) {
+				e.printStackTrace();
+		}
+	}
+
+	@Override
+	public List<MemberVo> selectAll() {
+			List<MemberVo> list = new ArrayList<MemberVo>();
+		try {
+			String query = "SELECT * FROM " + TABLE_NAME_MEMBER;
+			System.out.println("query : "+ query);
+			ResultSet rs = dataBaseUtils.executeQuery(query);
+		
+			while(rs.next()) {
+				MemberVo vo = new MemberVo(
+						rs.getInt("cno"),
+						rs.getString("id"),
+						rs.getString("password"),
+						rs.getString("cstNm"),
+						rs.getString("gender"),
+						rs.getString("email"),
+						rs.getString("address"),
+						rs.getString("aboutMe")
+						);
+				list.add(vo);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	/***
 	 * 회원의 cno로 데이터 베이스에서 계정을 삭제.
 	 * @param vo 계정의 vo 객체

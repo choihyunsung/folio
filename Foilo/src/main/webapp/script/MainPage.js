@@ -28,6 +28,7 @@ const boardModifyButton = document.getElementById("boardModifyButton") // 게시
 let isSettingNameChecked = true //이름 벨류 데이션 체킹
 let isSettingEmailChecked = true //이메일 벨류데이션 체킹 
 let isSettingAddressChecked = true //주소 벨류데이션 체킹 
+let posPageCount = 0 //패이지 카운트 default = 1
 
 /**글쓰기로 컨텐츠 전환 */
 const onLoadInsertBoard = () => {
@@ -57,31 +58,50 @@ const moveToPrevPage = () =>{
 
 /**게시글 리스트로 컨텐츠 전환 */
 const onLoadBoardList = () => {
+	const queryString = `?pageCount=${posPageCount}`
 	
-	fetch(URL_FOLIO_LOOK_UP_BOARD)
+	fetch(URL_FOLIO_LOOK_UP_BOARD + queryString)
 	.then(response => response.json())
-	.then(list => {
-		if(list.length > 0) {
+	.then(boardDTO => {
+		console.log(boardDTO)
+		const totalPage = boardDTO.totalPage
+		const boardList = boardDTO.boardList
+		if(boardList.length > 0) {
 			let htmlString =
 			`<div class='main-content-container-style' id='listRootContainer'>`+ 
 			`<p>게시글</p>`+
 			`<table class='board-list-style' style="width:100%;">` +
 				`<tr>`+
-					`<th class='board-colunm-style' style="width:20%;">글번호</th>`+
+					`<th class='board-colunm-style' style="width:10%;">글번호</th>`+
 					`<th class='board-colunm-style' style="width:50%;">제목</th>`+
-					`<th class='board-colunm-style' style="width:30%;">작성일</th>`+
+					`<th class='board-colunm-style' style="width:20%;">작성자</th>`+
+					`<th class='board-colunm-style' style="width:20%;">작성일</th>`+
 				`</tr>`
-			for(var i = 0; i < list.length; i++) {
+			for(let i = 0; i < boardList.length; i++) {
 				htmlString += 
 				`<tr class='board-row-style'>`+
-					`<td class='board-list-td'>${ list[i].no }</td>`+	
-					`<td class='board-list-td' style="cursor: pointer;" onclick="onLoadPrintBoard(${ list[i].no })">${ list[i].title }</td>`+	
-					`<td class='board-list-td'>${ list[i].date }</td>`+	
+					`<td class='board-list-td'>${ boardList[i].boardVo.no }</td>`+ //글번호 	
+					`<td class='board-list-td' style="cursor: pointer;" onclick="onLoadPrintBoard(${ boardList[i].boardVo.no })">${ boardList[i].boardVo.title }</td>`+	 //글 제목
+					`<td class='board-list-td'>${ boardList[i].author }</td>`+	
+					`<td class='board-list-td'>${ boardList[i].boardVo.date }</td>`+	
 				`</tr>`	
 			}
 			htmlString+=
 			`</div>` + 
 			`</table>`
+			htmlString+=`<div id='board-page-container'>`+"<"
+				for(let i = 0; i < totalPage; i++) {
+					let PageCountView;
+			
+					if(i === posPageCount){
+						PageCountView = `<a class='page-number-style' style="font-weight: bold" href="javascript:pageClick(${i})">${ i + 1 }</a>`
+					}else {
+						PageCountView = `<a class='page-number-style' href="javascript:pageClick(${i})">${ i + 1 }</a>`
+					}
+					htmlString += PageCountView
+				}
+			htmlString+=`></div>`
+			
 			contentDiv.innerHTML = htmlString
 		} else {
 			onNotBoardList() 
@@ -95,11 +115,21 @@ const onLoadBoardList = () => {
 	.catch(error => console.error("에러", error))
 }
 
+const pageClick = (pageCount) => {
+	posPageCount = pageCount
+	onLoadBoardList()
+}
+
 /* 게시글이 아무것도 없을때 호출 */
 const onNotBoardList = () => {
-	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
-	 						`<p>게시글이 단하나라도 존재하지 않습니다.:(</p>`+
-	 						`</div>`
+	if(posPageCount > 0) { //카운트가 클경우 삭제로 인해서 불러온 테이블이 전부 삭제된것이므로 페이지를 하나 줄이고 다시 로드한다.
+		posPageCount--
+		onLoadBoardList()
+	}else {
+		contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
+	 							`<p>게시글이 단하나라도 존재하지 않습니다.:(</p>`+
+	 							`</div>`
+	}
 }
 
 /* 수정 화면 보이기 */
@@ -227,7 +257,7 @@ const insertBoard = (cno) => {
 		.then(data =>{
 			if(data.isInsertBoard) {
 				alert("성공적으로 게시되었습니다.")
-				onLoadBoardList()				
+				onLoadBoardList()// 게시글 작성후 로 이동 	
 			} else {
 				alert("서버에서 게시글 작성이 실패되었습니다.")
 			}
