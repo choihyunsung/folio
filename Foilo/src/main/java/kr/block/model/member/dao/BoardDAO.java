@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.block.common.base.dao.BaseDao;
+import kr.block.common.object.Pair;
 import kr.block.common.utils.DataBaseUtils;
 import kr.block.model.member.vo.AuthorWithBoardVo;
 import kr.block.model.member.vo.BoardVo;
@@ -80,6 +81,69 @@ public class BoardDAO extends BaseDao<BoardVo> {
 		}
 		
 		return list;
+	}
+	
+	/***
+	 * 
+	 * @param currentPage 적용될 현재 페이지 
+	 * @param MaxPageNumber 한번에 보여줄 페이지 개수
+	 * @param searchTxt 검색어 
+	 * @param searchType 검색 타입
+	 * @return 현재 페이지의 리스트만을 반환한다
+	 */
+	public Pair<List<AuthorWithBoardVo>, Integer> getPageAuthorWithBoardSearchList(String searchTxt, String searchType, int currentPage, int MaxPageNumber) {
+		List<AuthorWithBoardVo> list = new ArrayList<AuthorWithBoardVo>();
+		int tableCount = 0; //검색문 토대로 다시 페이징 처리를 해야해서 다시 가져옴 
+ 		try {
+			System.out.println("PageCount : "+ currentPage);
+			int from = (currentPage > 0)? ((MaxPageNumber) * currentPage ) : 0; // 1보다 크다면 (현재 선택된 페이지 * 최대 페이지) - 최대 페이지 아닐경우 1이다 
+			int to = MaxPageNumber;
+
+			String searchColumn = "";
+			
+			switch(searchType) {
+				case "author": 
+					searchColumn = "member.cstNm";
+					break;
+				
+				case "title": 
+					searchColumn = "board.title";
+					break;
+			}
+			
+			//리미트는from 부터 to 개수 만큼이다 form 부터 to 사이가 아니라 .. 꼭 명심 진짜로 !
+			String query = "SELECT member.cstNm, board.* FROM "+ 
+							TABLE_NAME_BOARD + " INNER JOIN " + TABLE_NAME_MEMBER + " ON board.cno = member.cno WHERE " + searchColumn + " like '%" + searchTxt + "%' LIMIT " + from + ", " + to;
+			
+			ResultSet rs = dataBaseUtils.executeQuery(query);
+			while(rs.next()) {
+				AuthorWithBoardVo authorWithBoardVo = new AuthorWithBoardVo(
+						rs.getString("cstNm"), //작성자
+						new BoardVo(
+								rs.getInt("no"), //글번호 
+								rs.getInt("cno"),//작성자 번호 
+								rs.getDate("date"), //작성일자 
+								rs.getString("title"), //작성 제목
+								rs.getString("content") //작성 내용
+								)
+						);
+				list.add(authorWithBoardVo);
+			}
+			
+			//테이블 카운트를 다시 구함
+			String countQuery = "SELECT count(*) count FROM "+ 
+					TABLE_NAME_BOARD + " INNER JOIN " + TABLE_NAME_MEMBER + " ON board.cno = member.cno WHERE " + searchColumn + " like '%" + searchTxt + "%'";
+			rs = dataBaseUtils.executeQuery(countQuery);
+			while(rs.next()) {
+				tableCount = rs.getInt("count");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new Pair<List<AuthorWithBoardVo>, Integer>(list, tableCount);
 	}
 	
 	/***

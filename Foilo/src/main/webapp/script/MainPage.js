@@ -10,6 +10,7 @@ const URL_FOLIO_LOOK_UP_BOARD = URL_LOCAL_HOST + "/Foilo/LookUpBoardAction.do"//
 const URL_FOLIO_GET_BOARD = URL_LOCAL_HOST + "/Foilo/GetBoardAction.do" //게시글 보기 
 const URL_FOLIO_DELETE_BOARD = URL_LOCAL_HOST + "/Foilo/DeleteBoardAction.do" //게시글 삭제  
 const URL_FOLIO_MODIFY_BOARD = URL_LOCAL_HOST + "/Foilo/ModifyBoardAction.do" //게시글 수정  
+const URL_FOLIT_SEARCH_BOARD = URL_LOCAL_HOST + "/Foilo/SearchAction.do"
 const URL_PAGE_POPUP_PASSWORD_MODIFY = "./PasswordModifyPopUp.html" //비밀번호팝업 페이지
 
 const ERROR_VALIDATION_NAME_EMPTY_MSG = "이름에 빈값이 들어갈 수 없습니다."
@@ -29,6 +30,8 @@ let isSettingNameChecked = true //이름 벨류 데이션 체킹
 let isSettingEmailChecked = true //이메일 벨류데이션 체킹 
 let isSettingAddressChecked = true //주소 벨류데이션 체킹 
 let posPageCount = 0 //패이지 카운트 default = 1
+let lastSearchTxt = "" //마지막 검색입력
+let lastSearchType = ""// 마지막 검색 타입.
 
 /**글쓰기로 컨텐츠 전환 */
 const onLoadInsertBoard = () => {
@@ -63,9 +66,22 @@ const onLoadBoardList = () => {
 	fetch(URL_FOLIO_LOOK_UP_BOARD + queryString)
 	.then(response => response.json())
 	.then(boardDTO => {
+	
+		parseBoardList(boardDTO)
+		elementShow(writingBtn)
+		elementHide(writingSuccessBtn)
+		elementHide(settingModifyBtn)
+		elementHide(returnBoardButton)
+		elementHide(boardModifyButton)
+	})
+	.catch(error => console.error("에러", error))
+}
+
+function parseBoardList(boardDTO) {
 		console.log(boardDTO)
-		const totalPage = boardDTO.totalPage
-		const boardList = boardDTO.boardList
+		const totalPage = boardDTO.totalPage //전체 페이지 
+		const boardList = boardDTO.boardList //글 리스트 
+		
 		if(boardList.length > 0) {
 			let htmlString =
 			`<div class='main-content-container-style' id='listRootContainer'>`+ 
@@ -78,46 +94,76 @@ const onLoadBoardList = () => {
 					`<th class='board-colunm-style' style="width:20%;">작성일</th>`+
 				`</tr>`
 			for(let i = 0; i < boardList.length; i++) {
+				const date = new Date(boardList[i].boardVo.date)
+				const dateString =`${ date.getFullYear() }-${ date.getMonth() }-${date.getDay()}`
 				htmlString += 
 				`<tr class='board-row-style'>`+
 					`<td class='board-list-td'>${ boardList[i].boardVo.no }</td>`+ //글번호 	
 					`<td class='board-list-td' style="cursor: pointer;" onclick="onLoadPrintBoard(${ boardList[i].boardVo.no })">${ boardList[i].boardVo.title }</td>`+	 //글 제목
 					`<td class='board-list-td'>${ boardList[i].author }</td>`+	
-					`<td class='board-list-td'>${ boardList[i].boardVo.date }</td>`+	
+					`<td class='board-list-td'>${ dateString }</td>`+	
 				`</tr>`	
 			}
 			htmlString+=
 			`</div>` + 
 			`</table>`
-			htmlString+=`<div id='board-page-container'>`+"<"
+			htmlString+=`<div id='board-page-container'>` + "<"
 				for(let i = 0; i < totalPage; i++) {
 					let PageCountView;
 			
 					if(i === posPageCount){
-						PageCountView = `<a class='page-number-style' style="font-weight: bold" href="javascript:pageClick(${i})">${ i + 1 }</a>`
+						PageCountView = `<a class='page-number-style' style="font-weight: bold" href="javascript:pageClick(${ i })">${ i + 1 }</a>`
 					}else {
-						PageCountView = `<a class='page-number-style' href="javascript:pageClick(${i})">${ i + 1 }</a>`
+						PageCountView = `<a class='page-number-style' href="javascript:pageClick(${ i })">${ i + 1 }</a>`
 					}
 					htmlString += PageCountView
 				}
 			htmlString+=`></div>`
-			
+			htmlString+=`<div id='board-input-container'>` +
+			`<select id='board-search-select'>` +
+				`<option value="author" selected>작성자</option>`+
+				`<option value="title">제목</option>`+
+			`</select>` +
+				`<input id='board-search-input'type=text placeHolder="검색어를 입력하세요">` +
+				`<button id='baord-search-button' onclick="onSearch(${true})">검색</button>`+
+			`</div>`
 			contentDiv.innerHTML = htmlString
 		} else {
 			onNotBoardList() 
 		}
-		elementShow(writingBtn)
-		elementHide(writingSuccessBtn)
-		elementHide(settingModifyBtn)
-		elementHide(returnBoardButton)
-		elementHide(boardModifyButton)
+}
+
+/* 검색 버튼 누를 때 true 가들어오고 아니면 false가 들어옴 */
+const onSearch = ( isFlag ) => {
+	console.log(isFlag)
+	posPageCount = (isFlag)? 0 : posPageCount
+	console.log(`posPageCount : ${posPageCount}`)
+	const searchValue = document.getElementById("board-search-input").value
+	
+	const searchTypeList = document.getElementById('board-search-select')
+	const searchOptionType = searchTypeList.options[searchTypeList.selectedIndex].value
+	if(isFlag) { 
+		lastSearchTxt = searchValue  //검색어 저장 
+		lastSearchType = searchOptionType //검색어 저장
+	} 
+	const queryString = `?searchText=${lastSearchTxt}&searchType=${lastSearchType}&pageCount=${posPageCount}`
+	fetch(URL_FOLIT_SEARCH_BOARD + queryString)
+	.then(response => response.json())
+	.then(boardDTO => {
+		parseBoardList(boardDTO)
 	})
-	.catch(error => console.error("에러", error))
+	.catch(error=>console.error("에러", error))
 }
 
 const pageClick = (pageCount) => {
 	posPageCount = pageCount
-	onLoadBoardList()
+	if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
+		console.log("페이이지 제대로 들어옴 ")
+		onLoadBoardList()
+	}else {
+		console.log("페이이지 검색으로 들어옴  ")
+		onSearch(false) //아니면 검색으로 ㄱ
+	}
 }
 
 /* 게시글이 아무것도 없을때 호출 */

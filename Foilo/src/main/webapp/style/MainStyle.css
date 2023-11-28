@@ -144,8 +144,22 @@
 }
 
 #board-page-container {
-	margin-top: 20px;
-	margin-bottom: 20px;
+	width: min-content;
+    height: min-content;
+    margin: auto;
+    padding: 15px;
+}
+
+#board-input-container {
+	width: max-content;
+    height: min-content;
+    margin: auto;
+    padding: 15px;
+}
+
+#board-input-container * {
+	margin-left: 1px;
+	margin-right: 1px;
 }
 
 .page-number-style {
