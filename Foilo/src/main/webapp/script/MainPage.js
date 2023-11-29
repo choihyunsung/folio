@@ -191,12 +191,14 @@ const onNotBoardList = () => {
 		contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
 	 							`<p>${ errorString }</p>`+
 	 							`</div>`
-		lastSearchTxt = "" //검색어 초기화 
-		elementShow(returnBoardButton)
-		elementHide(writingSuccessBtn)
-		elementHide(settingModifyBtn)
-		elementHide(writingBtn)
-		elementHide(boardModifyButton)
+		if(isSearch) {
+			lastSearchTxt = "" //검색어 초기화 
+			elementShow(returnBoardButton)
+			elementHide(writingSuccessBtn)
+			elementHide(settingModifyBtn)
+			elementHide(writingBtn)
+			elementHide(boardModifyButton)
+		}
 	}
 }
 
@@ -361,6 +363,11 @@ const boardDelete = (boardNo) => {
 					onLoadBoardList()
 				}else {
 					onSearch(false) //아니면 검색으로 ㄱ
+					elementShow(writingBtn)
+					elementHide(writingSuccessBtn)
+					elementHide(settingModifyBtn)
+					elementHide(returnBoardButton)
+					elementHide(boardModifyButton)
 				}
 			}else {
 				
