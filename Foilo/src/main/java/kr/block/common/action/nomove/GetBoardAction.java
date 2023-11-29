@@ -29,7 +29,7 @@ public class GetBoardAction extends BaseDAOAction<BoardVo, BoardDAO>{
 			System.out.println();
 			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("text/plain"); // 미디어 유형 설정
-			resp.getWriter().write(JsonUtils.getVoJson(dao.getBoard(boardNo)).toJSONString());
+			resp.getWriter().write(JsonUtils.getVoJson(dao.getAuthorWidthBoard(boardNo)).toJSONString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

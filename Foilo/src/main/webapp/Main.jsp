@@ -28,6 +28,7 @@
          <button id="boardModifyButton" class="bottomButtonStyle" hidden>글 수정 완료</button>
          <button id="returnBoardButton" class="bottomButtonStyle" onclick="moveToPrevPage()" hidden>게시판으로 돌아가기</button>
     </div> <!--루트-->
+    <input type="hidden" id='memberInfoData' value='${sessionScope.memberInfo}'>
 </body>
 <script src="./script/MainPage.js"></script> 
 </html>

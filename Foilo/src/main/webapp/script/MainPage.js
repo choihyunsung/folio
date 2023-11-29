@@ -18,6 +18,7 @@ const ERROR_VALIDATION_EMAIL_EMPTY_MSG = "email에 빈값이 들어갈 수 없�
 const ERROR_VALIDATION_EMAIL_FORMAT_NOT_MATCH_MSG = "이메일에 형식이 올바르지 않습니다."
 const ERROR_VALIDATION_ADDRESS_EMPTY_MSG = "주소에 빈값이 들어갈 수 없습니다."
 
+const memberInfoJson = JSON.parse(document.getElementById("memberInfoData").value) //아이디 정보
 const contentDiv = document.getElementById("boardContainer")
 const writingBtn = document.getElementById("writingButton") //글쓰기 버튼 
 const writingSuccessBtn = document.getElementById("writingSuccessButton") //글작성완료 버튼 
@@ -32,6 +33,7 @@ let isSettingAddressChecked = true //주소 벨류데이션 체킹
 let posPageCount = 0 //패이지 카운트 default = 1
 let lastSearchTxt = "" //마지막 검색입력
 let lastSearchType = ""// 마지막 검색 타입.
+
 
 /**글쓰기로 컨텐츠 전환 */
 const onLoadInsertBoard = () => {
@@ -54,9 +56,11 @@ const onLoadInsertBoard = () => {
 
 /** 이전페이지 이동시 처리될것. */
 const moveToPrevPage = () =>{
-	//TESTLINE
-	onLoadBoardList()
-	//TESTLINE
+	if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
+		onLoadBoardList()
+	}else {
+		onSearch(false) //아니면 검색으로 ㄱ
+	}
 }
 
 /**게시글 리스트로 컨텐츠 전환 */
@@ -77,15 +81,17 @@ const onLoadBoardList = () => {
 	.catch(error => console.error("에러", error))
 }
 
+/*게시글 리스트 파싱 작업 */
 function parseBoardList(boardDTO) {
 		console.log(boardDTO)
 		const totalPage = boardDTO.totalPage //전체 페이지 
 		const boardList = boardDTO.boardList //글 리스트 
-		
+	
 		if(boardList.length > 0) {
 			let htmlString =
 			`<div class='main-content-container-style' id='listRootContainer'>`+ 
 			`<p>게시글</p>`+
+			`<pre id='show-search-info'>검색타입:'${ lastSearchType }',검색 내용:'${ lastSearchTxt }'로 검색한결과 </pre>`+
 			`<table class='board-list-style' style="width:100%;">` +
 				`<tr>`+
 					`<th class='board-colunm-style' style="width:10%;">글번호</th>`+
@@ -128,6 +134,10 @@ function parseBoardList(boardDTO) {
 				`<button id='baord-search-button' onclick="onSearch(${true})">검색</button>`+
 			`</div>`
 			contentDiv.innerHTML = htmlString
+			const showSearchInfo = document.getElementById("show-search-info")
+			if(lastSearchTxt === "") {
+				elementHide(showSearchInfo)
+			}
 		} else {
 			onNotBoardList() 
 		}
@@ -138,11 +148,11 @@ const onSearch = ( isFlag ) => {
 	console.log(isFlag)
 	posPageCount = (isFlag)? 0 : posPageCount
 	console.log(`posPageCount : ${posPageCount}`)
-	const searchValue = document.getElementById("board-search-input").value
 	
-	const searchTypeList = document.getElementById('board-search-select')
-	const searchOptionType = searchTypeList.options[searchTypeList.selectedIndex].value
 	if(isFlag) { 
+		const searchValue = document.getElementById("board-search-input").value
+		const searchTypeList = document.getElementById('board-search-select')
+		const searchOptionType = searchTypeList.options[searchTypeList.selectedIndex].value
 		lastSearchTxt = searchValue  //검색어 저장 
 		lastSearchType = searchOptionType //검색어 저장
 	} 
@@ -152,17 +162,16 @@ const onSearch = ( isFlag ) => {
 	.then(boardDTO => {
 		parseBoardList(boardDTO)
 	})
-	.catch(error=>console.error("에러", error))
+	.catch(error=> console.error("에러", error) )
 }
 
 const pageClick = (pageCount) => {
 	posPageCount = pageCount
 	if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
-		console.log("페이이지 제대로 들어옴 ")
 		onLoadBoardList()
 	}else {
-		console.log("페이이지 검색으로 들어옴  ")
 		onSearch(false) //아니면 검색으로 ㄱ
+		
 	}
 }
 
@@ -170,21 +179,34 @@ const pageClick = (pageCount) => {
 const onNotBoardList = () => {
 	if(posPageCount > 0) { //카운트가 클경우 삭제로 인해서 불러온 테이블이 전부 삭제된것이므로 페이지를 하나 줄이고 다시 로드한다.
 		posPageCount--
-		onLoadBoardList()
+		if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
+			onLoadBoardList()
+		}else {
+			onSearch(false) //아니면 검색으로 ㄱ
+		}
 	}else {
+		const isSearch = (lastSearchTxt != "")
+		const errorString = (!isSearch)? "게시글이 단하나라도 존재하지 않습니다.:(" : `${ lastSearchTxt }로 검색한 결과가 없습니다. :<`
+		
 		contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
-	 							`<p>게시글이 단하나라도 존재하지 않습니다.:(</p>`+
+	 							`<p>${ errorString }</p>`+
 	 							`</div>`
+		lastSearchTxt = "" //검색어 초기화 
+		elementShow(returnBoardButton)
+		elementHide(writingSuccessBtn)
+		elementHide(settingModifyBtn)
+		elementHide(writingBtn)
+		elementHide(boardModifyButton)
 	}
 }
 
 /* 수정 화면 보이기 */
 const onLoadModifyBoard = (boardInfo) => {
-	const content = boardInfo.content.replaceAll("<br>", "\r\n");
+	const content = boardInfo.boardVo.content.replaceAll("<br>", "\r\n");
  	contentDiv.innerHTML = `<div class='main-content-container-style' id='writingRootContainer'>` +
 	 							`<p class='nomalTitleStyle' id='settingTitle'>글수정 화면</p>` +
 	 							`<p class='subTitleStyle'>제목</p>` +
-	 							`<input class='nomalInputStyle' id='modify-board-title' type='text' style='width:99%' placeholder='제목 입력 하기' value='${ boardInfo.title }'><br>` +
+	 							`<input class='nomalInputStyle' id='modify-board-title' type='text' style='width:99%' placeholder='제목 입력 하기' value='${ boardInfo.boardVo.title }'><br>` +
 	 							`<p class='subTitleStyle'>내용</p>` +
 	 							`<textarea class='nomalTextArea' id='modify-board-content' style='width:100%; height: 200px' placeholder="내용을 입력하세요">${ content }</textarea><br>` +
 	 							`<div>` +
@@ -200,9 +222,9 @@ const onLoadModifyBoard = (boardInfo) => {
 	const modifyClickListener = () => {
 		const modifyTitleVal = document.getElementById("modify-board-title").value
 		const modifyContentVal = document.getElementById("modify-board-content").value
-		boardInfo.title = modifyTitleVal
-		boardInfo.content = modifyContentVal
- 		modifyBoard(boardInfo) //서버랑 통신해서 데이터 수정하기 
+		boardInfo.boardVo.title = modifyTitleVal
+		boardInfo.boardVo.content = modifyContentVal
+ 		modifyBoard(boardInfo.boardVo) //서버랑 통신해서 데이터 수정하기 
  		boardModifyButton.removeEventListener("click", modifyClickListener)
 	}
 	boardModifyButton.addEventListener("click", modifyClickListener)
@@ -214,42 +236,57 @@ const onLoadPrintBoard = (boardNo) => {
 		fetch(URL_FOLIO_GET_BOARD + queryString)
 		.then(response => response.json())
 		.then(data => {
-		contentDiv.innerHTML = 
-			`<div class='main-content-container-style' id='readRootContainer'>` +
-				`<p class='board-read-title-style'>글보기</p>` +
-				`<table class='board-read-style'>` + 
-					`<tr>` +
-						`<td class='board-sub-style'>제목</td>` + 
-					`</tr>` +
-					`<tr>` +
-						`<td><pre class='read-board-title-style'>${data.title}</pre></td>` + 
-					`</tr>` +
-					`<tr>` +
-						`<td class='board-sub-style'>내용</td>` +
-					`</tr>` +
-					`<tr>` +
-						`<td colspan='2' style="height:190px;">` +
-							`<pre class='board-read-content-style'>${ data.content }</pre>` +
-						`</td>` +
-					`</tr>` +
-					`<tr>` +
-						`<td colspan='2'>`+
-							`<button class='nomalButtonStyle' onclick='boardModify(${ JSON.stringify(data) })'>수정</button>` +
-							`<button class='nomalButtonStyle' onclick="boardDelete(${ data.no })">삭제</button>` +
-						`</td>`+
-					`</tr>` +
-				`</table>` + 
-			`</div>`
-			
-			elementShow(returnBoardButton)
-			elementHide(writingSuccessBtn)
-			elementHide(settingModifyBtn)
-			elementHide(writingBtn)
-			elementHide(boardModifyButton)
-		})
-		.catch(error => console.error("에러", error))
-	
-	
+			const author = data.author
+			const boardVo = data.boardVo 
+			const date = new Date(boardVo.date)
+			const isMyBoard = (boardVo.cno === memberInfoJson.cno) //나에 글일경우 
+			const dateString =`${ date.getFullYear() }-${ date.getMonth() }-${date.getDay()}`
+			contentDiv.innerHTML = 
+				`<div class='main-content-container-style' id='readRootContainer'>` +
+					`<p class='board-read-title-style'>글보기</p>` +
+					`<div>`+
+						`<ul id='board-read-member-info-container'>`+
+							`<li class='li-left-sort-style'>` + `작성자 : ${ author }` + `</li>` +
+							`<li class='li-left-sort-style'> `+`작성 일자 : ${ dateString }`+`</li>`+
+						`</ul>`+
+					`</div>`+
+					`<table class='board-read-style'>` + 
+						`<tr>` +
+							`<td class='board-sub-style'>제목</td>` + 
+						`</tr>` +
+						`<tr>` +
+							`<td><pre class='read-board-title-style'>${ boardVo.title }</pre></td>` + 
+						`</tr>` +
+						`<tr>` +
+							`<td class='board-sub-style'>내용</td>` +
+						`</tr>` +
+						`<tr>` +
+							`<td colspan='2' style="height:190px;">` +
+								`<pre class='board-read-content-style'>${ boardVo.content }</pre>` +
+							`</td>` +
+						`</tr>` +
+						`<tr>` +
+							`<td colspan='2'>`+
+								`<button class='nomalButtonStyle' id='board-modify-button' onclick='boardModify(${ JSON.stringify(data) })'>수정</button>` +
+								`<button class='nomalButtonStyle' id='board-delete-button' onclick="boardDelete(${ boardVo.no })">삭제</button>` +
+							`</td>`+
+						`</tr>` +
+					`</table>` + 
+				`</div>`
+				if(!isMyBoard) {
+					const modBtn = document.getElementById("board-modify-button")
+					const delBtn = document.getElementById("board-delete-button")
+					elementHide(modBtn)
+					elementHide(delBtn)
+					
+				}
+				elementShow(returnBoardButton)
+				elementHide(writingSuccessBtn)
+				elementHide(settingModifyBtn)
+				elementHide(writingBtn)
+				elementHide(boardModifyButton)
+			})
+			.catch(error => console.error("에러", error))
 }
 /*세팅 화면*/
 const onLoadSetting = (info) => {
@@ -304,6 +341,8 @@ const insertBoard = (cno) => {
 			if(data.isInsertBoard) {
 				alert("성공적으로 게시되었습니다.")
 				onLoadBoardList()// 게시글 작성후 로 이동 	
+				lastSearchTxt=""
+				lastSearchType=""
 			} else {
 				alert("서버에서 게시글 작성이 실패되었습니다.")
 			}
@@ -318,7 +357,11 @@ const boardDelete = (boardNo) => {
 		.then(response => response.json())
 		.then(data => {
 			if(data.isDeleteBoard) {
-				onLoadBoardList()
+				if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
+					onLoadBoardList()
+				}else {
+					onSearch(false) //아니면 검색으로 ㄱ
+				}
 			}else {
 				
 			}
@@ -355,7 +398,11 @@ const modifyBoard = (boardInfo) => {
 		
 		if(data.isModifyBoard) {
 			alert("성공적으로 게시글을 수정하였습니다.")
-			onLoadBoardList()
+			if(lastSearchTxt === ""){ //검색이 안되었거나 빈값 입력시 
+				onLoadBoardList()
+			}else {
+				onSearch(false) //아니면 검색으로 ㄱ
+			}
 		} else {
 			alert("서버에서 수정을 실패하였습니다.")
 		}
@@ -532,10 +579,7 @@ window.addEventListener('resize',() => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded")
     updateCenterPosition()
-   	//HSCHOE TESTLINE
-   	//처음 로드시에는 무조건 게시글 리스트이므로 
     onLoadBoardList()
-    //HSCHOE TESTLINE
 })
 
 const onLogout = () => {

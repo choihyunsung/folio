@@ -89,7 +89,7 @@ public class BoardDAO extends BaseDao<BoardVo> {
 	 * @param MaxPageNumber 한번에 보여줄 페이지 개수
 	 * @param searchTxt 검색어 
 	 * @param searchType 검색 타입
-	 * @return 현재 페이지의 리스트만을 반환한다
+	 * @return 검색어로 검색된 현재 페이지 리스트만,그리고 검색어로 검색된 페이지 총 카운트를 반환함.
 	 */
 	public Pair<List<AuthorWithBoardVo>, Integer> getPageAuthorWithBoardSearchList(String searchTxt, String searchType, int currentPage, int MaxPageNumber) {
 		List<AuthorWithBoardVo> list = new ArrayList<AuthorWithBoardVo>();
@@ -144,6 +144,34 @@ public class BoardDAO extends BaseDao<BoardVo> {
 		}
 		
 		return new Pair<List<AuthorWithBoardVo>, Integer>(list, tableCount);
+	}
+	
+	/***
+	 * @param boardNo 조회할 게시글 넘버
+	 * @return 게시글 번호로 게시글을 조회해 반환한다.
+	 */
+	public AuthorWithBoardVo getAuthorWidthBoard(int boardNo) {
+		AuthorWithBoardVo authorWithBoardVo = null;
+		try {
+			String query = "SELECT member.cstNm, board.* FROM "+ TABLE_NAME_BOARD + " INNER JOIN " + TABLE_NAME_MEMBER +" ON board.cno = member.cno WHERE board.no = " + boardNo;
+			ResultSet rs = dataBaseUtils.executeQuery(query);
+	
+			while(rs.next()) {
+				authorWithBoardVo = new AuthorWithBoardVo(
+						rs.getString("cstNm"),
+						new BoardVo(
+								rs.getInt("no"),
+								rs.getInt("cno"),
+								rs.getDate("date"),
+								rs.getString("title"),
+								rs.getString("content"))
+						);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return authorWithBoardVo;
 	}
 	
 	/***
